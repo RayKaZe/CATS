@@ -1,0 +1,21 @@
+.toggle-btn { 
+    text-align:centre; 
+    margin:5px 2px;
+    padding:0.4em 3em; 
+    color:#000; 
+    background-color:#FFF; 
+    border-radius:10px; 
+    display:inline-block; 
+    border:solid 1px #CCC; 
+    cursor:pointer;
+}
+
+.toggle-btn:hover { 
+    border:solid 1px #a0d5dc !important; 
+    background:#f1fdfe;
+}
+
+.toggle-btn.success { 
+    background:lightgreen;
+    border:solid 1px green !important; 
+}

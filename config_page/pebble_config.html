@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pebble Config Page</title>
+    <link rel="stylesheet" href="pebble_config.css">
+  </head>
+  <body>
+    <h1>Pebble App Config</h1>
+    <p>Do you even invert bro?</p>
+    <label onclick="" class="toggle-btn"><input type="radio" name="invert_select" value="on" checked>Invert</label>
+    <label onclick="" class="toggle-btn"><input type="radio" name="invert_select" value="off">Don't</label>
+    <button id="save_button">Save</button>
+
+  </body>
+  <script>
+    function saveOptions() {
+      var invertSelect = document.getElementsByName("invert_select");
+      for (var i = 0, length = invertSelect.length; i < length; i++) {
+        if (invertSelect[i].checked) {
+            var options = {"invert": invertSelect[i].value}
+            break;
+        }
+      }
+      return options;
+    };
+   
+    var submitButton = document.getElementById("save_button");
+    submitButton.addEventListener("click", 
+      function() {
+        var options = saveOptions();
+        var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(options));
+        document.location = location;
+      }, 
+    false);
+  </script>
+</html>
