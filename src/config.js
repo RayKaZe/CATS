@@ -8,7 +8,7 @@ Pebble.addEventListener("ready",
 Pebble.addEventListener("showConfiguration",
   function(e) {
     //Load the remote config page
-    Pebble.openURL("https://dl.dropboxusercontent.com/u/2666739/pebble_config.html");
+    Pebble.openURL("https://dl.dropboxusercontent.com/u/2666739/Hacklondon-Pebble/config_page/pebble_config.html");
   }
 );
 

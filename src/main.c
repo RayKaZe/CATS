@@ -19,13 +19,13 @@ static void window_load(Window *window)
   {
     text_layer_set_text_color(text_layer, GColorWhite);
     text_layer_set_background_color(text_layer, GColorBlack);
-    text_layer_set_text(text_layer, "#HackLondon\nOh hai team!\nInverted!");
+    text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nInverted!");
   }
   else
   {
     text_layer_set_text_color(text_layer, GColorBlack);
     text_layer_set_background_color(text_layer, GColorWhite);
-    text_layer_set_text(text_layer, "#HackLondon\nOh hai team!\nNot Inverted!");
+    text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nNot Inverted!");
   }
  
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
@@ -51,7 +51,7 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
         //Set and save as inverted
         text_layer_set_text_color(text_layer, GColorWhite);
         text_layer_set_background_color(text_layer, GColorBlack);
-        text_layer_set_text(text_layer, "#HackLondon\nOh hai team!\nInverted!");
+        text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nInverted!");
  
         persist_write_bool(KEY_INVERT, true);
       }
@@ -60,7 +60,7 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
         //Set and save as not inverted
         text_layer_set_text_color(text_layer, GColorBlack);
         text_layer_set_background_color(text_layer, GColorWhite);
-        text_layer_set_text(text_layer, "#HackLondon\nOh hai team!\nNot Inverted!");
+        text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nNot Inverted!");
  
         persist_write_bool(KEY_INVERT, false);
       }

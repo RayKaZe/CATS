@@ -6,13 +6,13 @@
         "configurable"
     ],
     "companyName": "jamesgillard@live.co.uk",
-    "longName": "Pebble App Config Test",
+    "longName": "Pebble App Config",
     "projectType": "native",
     "resources": {
         "media": []
     },
     "sdkVersion": "2",
-    "shortName": "Pebble App Config Test",
+    "shortName": "Pebble App Config",
     "uuid": "085ebc2f-0fd9-4f86-866f-d1c24c637796",
     "versionCode": 1,
     "versionLabel": "1.0",
