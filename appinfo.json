@@ -1,22 +1,22 @@
 {
     "appKeys": {
-        "KEY_INVERT": 0
+        "dummy": 0
     },
     "capabilities": [
-        "configurable"
+        ""
     ],
-    "companyName": "jamesgillard@live.co.uk",
-    "longName": "Pebble App Config",
+    "companyName": "0x65.net",
+    "longName": "Barcodes",
     "projectType": "native",
     "resources": {
         "media": []
     },
     "sdkVersion": "2",
-    "shortName": "Pebble App Config",
-    "uuid": "085ebc2f-0fd9-4f86-866f-d1c24c637796",
+    "shortName": "Barcodes",
+    "uuid": "98c8ac72-b795-44f2-a279-ba831d48e9c9",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
-        "watchface": true
+        "watchface": false
     }
 }
