@@ -1,22 +1,29 @@
 {
     "appKeys": {
-        "KEY_INVERT": 0
+        "KEY_CARDNAME": 0,
+        "KEY_CARDNUMBER": 1
     },
     "capabilities": [
         "configurable"
     ],
-    "companyName": "jamesgillard@live.co.uk",
-    "longName": "Pebble App Config",
+    "companyName": "leothemagnificent@gmail.com",
+    "longName": "CARD",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/SPLASH_CAT.png",
+                "name": "SPLASH_CAT",
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "2",
-    "shortName": "Pebble App Config",
-    "uuid": "085ebc2f-0fd9-4f86-866f-d1c24c637796",
+    "shortName": "CARD",
+    "uuid": "0e5c291e-2ea7-48d4-8056-fa05c51d347d",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
-        "watchface": true
+        "watchface": false
     }
 }
