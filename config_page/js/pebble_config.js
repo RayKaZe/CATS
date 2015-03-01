@@ -10,7 +10,10 @@ function checkInput() {
 function saveOptions() {
     var cardName = document.getElementById("cardName");
     var cardNumber = document.getElementById("cardNumber");
-    var options = {"name": cardName.value.concat("\0"), "number": cardNumber.value.concat("\0")};
+    var zeros1 = 11 - cardName.value.length;
+    var zeros2 = 11 - cardNumber.value.length;
+    // loads of nulls go here???
+    var options = {"name": cardName.value, "number": cardNumber.value};
     return options;
 };
    
@@ -21,9 +24,9 @@ submitButton.addEventListener("click",
       alert("Incorrect card number")
       return;
     } else {
-    var options = saveOptions();
-    var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(options));
-    document.location = location;
+      var options = saveOptions();
+      var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(options));
+      document.location = location;
     }
   }, 
 false);
