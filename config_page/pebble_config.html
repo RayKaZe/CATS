@@ -4,27 +4,24 @@
     <title>Pebble Config Page</title>
     <link rel="stylesheet" href="pebble_config.css">
   </head>
+
   <body>
     <h1>Pebble App Config</h1>
-    <p>Do you even invert bro?</p>
-    <label onclick="" class="toggle-btn"><input type="radio" name="invert_select" value="on" checked>Invert</label>
-    <label onclick="" class="toggle-btn"><input type="radio" name="invert_select" value="off">Don't</label>
-    <button id="save_button">Save</button>
-
+    <p>Do you even <a href="https://www.youtube.com/watch?v=1wIV6l2ux_8">Clubcard</a> bro?</p>
+    Card Name: <input type="text" id="cardName" Placeholder="Tesco"><br><br>
+    Number: <input type="number" id="cardNumber" Placeholder="123456" pattern="\d*"><br><br>
+    <button id="addcard_button">Add card</button>
   </body>
+
   <script>
     function saveOptions() {
-      var invertSelect = document.getElementsByName("invert_select");
-      for (var i = 0, length = invertSelect.length; i < length; i++) {
-        if (invertSelect[i].checked) {
-            var options = {"invert": invertSelect[i].value}
-            break;
-        }
-      }
+      var cardName = document.getElementById("cardName");
+      var cardNumber = document.getElementById("cardNumber");
+      var options = {"name": cardName.value, "number": cardNumber.value}
       return options;
     };
    
-    var submitButton = document.getElementById("save_button");
+    var submitButton = document.getElementById("addcard_button");
     submitButton.addEventListener("click", 
       function() {
         var options = saveOptions();
