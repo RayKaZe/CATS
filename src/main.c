@@ -1,71 +1,62 @@
 #include <pebble.h>
+#include <inttypes.h>
   
-#define KEY_INVERT 0
+#define KEY_CARDNAME 0
+#define KEY_CARDNUMBER 1
  
 static Window *window;
-static TextLayer *text_layer;
+static TextLayer *text_layer_info;
+static TextLayer *text_layer_name;
+static TextLayer *text_layer_number;
+
+static void new_layer(Window *window, TextLayer **layer, GRect loc, char *message) {
+  *layer = text_layer_create(loc);
+  text_layer_set_font(*layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+  text_layer_set_text(*layer, message); 
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(*layer));
+}
  
 static void window_load(Window *window) 
 {
   //Check for saved option
-  bool inverted = persist_read_bool(KEY_INVERT);
+  //char card_name = persist_read_string(KEY_CARDNAME);
+  //int card_number = persist_read_string(KEY_CARDNUMBER);
  
-  //Create TextLayer
-  text_layer = text_layer_create(GRect(0, 0, 144, 168));
-  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
- 
-  //Option-specific setup
-  if(inverted == true)
-  {
-    text_layer_set_text_color(text_layer, GColorWhite);
-    text_layer_set_background_color(text_layer, GColorBlack);
-    text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nInverted!");
-  }
-  else
-  {
-    text_layer_set_text_color(text_layer, GColorBlack);
-    text_layer_set_background_color(text_layer, GColorWhite);
-    text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nNot Inverted!");
-  }
- 
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
+  new_layer(window, &text_layer_info, GRect(0, 0, 144, 60), "#HackLondon\nOh hai team :)\0");
+  new_layer(window, &text_layer_name, GRect(0, 60, 144, 30), "Old McCharger had a farm...\nE I E I O\0");
+  new_layer(window, &text_layer_number, GRect(0, 90, 144, 78), "Useful things go 'ere\0");
 }
  
 static void window_unload(Window *window) 
 {
-  text_layer_destroy(text_layer);
+  text_layer_destroy(text_layer_name);
+  text_layer_destroy(text_layer_number);
+  text_layer_destroy(text_layer_info);
 }
  
 static void in_recv_handler(DictionaryIterator *iterator, void *context)
 {
   //Get Tuple
   Tuple *t = dict_read_first(iterator);
-  if(t)
+  
+  while (t != NULL)
   {
+    app_log(APP_LOG_LEVEL_INFO,"main.c",44,"%" PRIu32,t->key);
     switch(t->key)
     {
-    case KEY_INVERT:
-      //It's the KEY_INVERT key
-      if(strcmp(t->value->cstring, "on") == 0)
-      {
-        //Set and save as inverted
-        text_layer_set_text_color(text_layer, GColorWhite);
-        text_layer_set_background_color(text_layer, GColorBlack);
-        text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nInverted!");
- 
-        persist_write_bool(KEY_INVERT, true);
-      }
-      else if(strcmp(t->value->cstring, "off") == 0)
-      {
-        //Set and save as not inverted
-        text_layer_set_text_color(text_layer, GColorBlack);
-        text_layer_set_background_color(text_layer, GColorWhite);
-        text_layer_set_text(text_layer, "#HackLondon\nOh hai team :)\nNot Inverted!");
- 
-        persist_write_bool(KEY_INVERT, false);
-      }
-      break;
+    case KEY_CARDNAME:
+        app_log(APP_LOG_LEVEL_INFO,"main.c",48,"%s",t->value->cstring);
+        text_layer_set_text(text_layer_name, t->value->cstring);
+        //persist_write_string(KEY_CARDNAME, t->key->value);
+        break;
+    case KEY_CARDNUMBER:
+        app_log(APP_LOG_LEVEL_INFO,"main.c",53,"%s",t->value->cstring);
+        text_layer_set_text(text_layer_number, t->value->cstring);
+        //persist_write_string(KEY_CARDNUMBER, t->key->value);
+        break;
     }
+    // Get next pair, if any
+    t = dict_read_next(iterator);
   }
 }
 

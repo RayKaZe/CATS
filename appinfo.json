@@ -1,6 +1,7 @@
 {
     "appKeys": {
-        "KEY_INVERT": 0
+        "KEY_CARDNAME": 0,
+        "KEY_CARDNUMBER": 1
     },
     "capabilities": [
         "configurable"
@@ -17,6 +18,6 @@
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
-        "watchface": true
+        "watchface": false
     }
 }

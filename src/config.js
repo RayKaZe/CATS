@@ -20,8 +20,10 @@ Pebble.addEventListener("webviewclosed",
     console.log("Configuration window returned: " + JSON.stringify(configuration));
  
     //Send to Pebble, persist there
+    var message = {"KEY_CARDNAME": configuration.name, "KEY_CARDNUMBER": configuration.number};
+    console.log(JSON.stringify(message));
     Pebble.sendAppMessage(
-      {"KEY_INVERT": configuration.invert},
+      message,
       function(e) {
         console.log("Sending settings data...");
       },
