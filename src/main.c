@@ -11,6 +11,7 @@ static GBitmap *splash_cat_bitmap;
 static BitmapLayer *splash_cat_bitmap_layer;
 InverterLayer *cat_inverter_layer;
 BitmapLayer *barcode;
+TextLayer *footer;
 
 #define MARGIN 5
 #define MAX_DATA_KEY 30
@@ -18,7 +19,7 @@ BitmapLayer *barcode;
 #define KEY_CARDNUMBER 1
 
 typedef enum {
-  BARCODE, 
+  BARCODE,
   QRCODE,
 } data_type;
 
@@ -89,7 +90,7 @@ void setup_entry_db()
 void bar_code_window_load(Window *window)
 {
   Layer *windowLayer = window_get_root_layer(window);
-	char *data = window_get_user_data(window);
+	card_entry *data = (card_entry *) window_get_user_data(window);
   GRect bounds = layer_get_bounds(windowLayer);
 	bounds.origin.y += MARGIN;
 	bounds.size.h -= 2 * MARGIN;
@@ -102,19 +103,32 @@ void bar_code_window_load(Window *window)
 	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
 	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
   
-  APP_LOG(APP_LOG_LEVEL_INFO, "bar_code_window_load, data: %s", data);
+  APP_LOG(APP_LOG_LEVEL_INFO, "bar_code_window_load, data: %s", data->data);
   
-  bmp->bounds.size.h = drawCode128(data);
+  bmp->bounds.size.h = drawCode128(data->data);
   
   bitmap_layer_set_bitmap(barcode, bmp);
   
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(barcode)); 
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(barcode));
+  
+  // Create time TextLayer
+  footer = text_layer_create(GRect(0, 140, 144, 30));
+  text_layer_set_background_color(footer, GColorClear);
+  text_layer_set_text_color(footer, GColorBlack);
+  
+  // Improve the layout to be more like a watchface
+  text_layer_set_font(footer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+  text_layer_set_text_alignment(footer, GTextAlignmentCenter);
+  text_layer_set_text(footer, data->title);
+  // Add it as a child layer to the Window's root layer
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(footer));
 }
 
 void bar_code_window_unload(Window *window)
 {
     bitmap_layer_destroy(barcode);
     gbitmap_destroy(bmp);
+    text_layer_destroy(footer);
 }
 
 void display_bar_code( char *data )
@@ -159,7 +173,7 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
 
   switch (entry_db[which].data_type) {
     case BARCODE:  
-      display_bar_code(entry_db[which].data);
+      display_bar_code((char *)&entry_db[which]);
       break;
     case QRCODE:
       display_qr_code(entry_db[which].data);
