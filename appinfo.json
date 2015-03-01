@@ -7,7 +7,7 @@
         "configurable"
     ],
     "companyName": "leothemagnificent@gmail.com",
-    "longName": "CARD",
+    "longName": "Card And Ticket Storage",
     "projectType": "native",
     "resources": {
         "media": [
@@ -19,7 +19,7 @@
         ]
     },
     "sdkVersion": "2",
-    "shortName": "CARD",
+    "shortName": "CATS",
     "uuid": "0e5c291e-2ea7-48d4-8056-fa05c51d347d",
     "versionCode": 1,
     "versionLabel": "1.0",

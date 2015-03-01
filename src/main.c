@@ -13,7 +13,6 @@ InverterLayer *cat_inverter_layer;
 BitmapLayer *barcode;
 
 #define MARGIN 5
-#define NUM_ENTRIES 7
 #define MAX_DATA_KEY 30
 #define KEY_CARDNAME 0
 #define KEY_CARDNUMBER 1
@@ -31,25 +30,52 @@ typedef struct card_entry {
 
 char label[] = "card";
 
-struct card_entry entry_db[NUM_ENTRIES];
+struct card_entry *entry_db;
+
+int get_free_data_key()
+{
+  unsigned int i;
+  for (i=0; i<MAX_DATA_KEY; i++)
+  {
+    if (!persist_exists(i))
+      return i;
+  }
+  return -1;
+}
 
 void setup_entry_db()
 {
   int i;
-  for (i=0; i<NUM_ENTRIES; i++)
+  int num_entries = get_free_data_key();
+  entry_db = malloc( sizeof(card_entry)*num_entries  );
+  char *data_entry = malloc(32);
+  int name_len = 0;
+  
+  for (i=1; i<num_entries; i++)
   {
-    entry_db[i] = (card_entry) {
-      .data_type = BARCODE,
-      .title = label,
-      .data = NULL
-    };
+    persist_read_data(i, data_entry, 32);
+    
+    APP_LOG( APP_LOG_LEVEL_DEBUG, "data_entry: %s", data_entry);
+    entry_db[i-1].data_type = BARCODE;
+    
+    name_len = strlen(data_entry);
+    APP_LOG( APP_LOG_LEVEL_DEBUG, "name_len: %i", name_len );
+    
+    entry_db[i-1].title = malloc( name_len+1 );    
+    strncpy( entry_db[i-1].title, data_entry, name_len );
+
+    entry_db[i-1].data = malloc( strlen(data_entry+11) + 1 );
+    strncpy( entry_db[i-1].data, data_entry+11, strlen(data_entry+11) );
+    
+    APP_LOG( APP_LOG_LEVEL_DEBUG, "entry: %s, %s", entry_db[i-1].title, entry_db[i-1].data );
   }
 }
 
 void bar_code_window_load(Window *window)
 {
   Layer *windowLayer = window_get_root_layer(window);
-	GRect bounds = layer_get_bounds(windowLayer);
+	char *data = window_get_user_data(window);
+  GRect bounds = layer_get_bounds(windowLayer);
 	bounds.origin.y += MARGIN;
 	bounds.size.h -= 2 * MARGIN;
   bmp = gbitmap_create_blank(bounds.size);
@@ -60,7 +86,10 @@ void bar_code_window_load(Window *window)
 	// Width in bytes, aligned to multiples of 4.
 	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
 	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
-  bmp->bounds.size.h = drawCode128("9794024334524784");
+  
+  APP_LOG(APP_LOG_LEVEL_INFO, "bar_code_window_load, data: %s", data);
+  
+  bmp->bounds.size.h = drawCode128(data);
   
   bitmap_layer_set_bitmap(barcode, bmp);
   
@@ -83,6 +112,7 @@ void display_bar_code( char *data )
   };
   window_set_window_handlers(bar_code_window, (WindowHandlers) handlers);
   window_set_fullscreen(bar_code_window, true);
+  window_set_user_data(bar_code_window, data);
   window_stack_push(bar_code_window, true);
 }
 
@@ -95,12 +125,13 @@ void display_qr_code( char *data)
 void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context)
 {
   APP_LOG(APP_LOG_LEVEL_INFO, "string %s", (entry_db[cell_index->row].title));
-  menu_cell_basic_draw(ctx, cell_layer, entry_db[cell_index->row].title, "SUB", NULL);
+  menu_cell_basic_draw(ctx, cell_layer, entry_db[cell_index->row].title, entry_db[cell_index->row].data, NULL);
 }
  
 uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
 {
-  return 7;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "list length: %i", get_free_data_key());
+  return get_free_data_key()-1;
 }
  
 void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context)
@@ -158,7 +189,7 @@ void splash_window_load(Window *window)
   splash_logo = text_layer_create(GRect(0, 10, 144, 50));
   text_layer_set_background_color(splash_logo, GColorClear);
   text_layer_set_text_color(splash_logo, GColorClear);
-  text_layer_set_text(splash_logo, "CARD");
+  text_layer_set_text(splash_logo, "CATS");
 
   // Improve the layout to be more like a watchface
   text_layer_set_font(splash_logo, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
@@ -186,20 +217,9 @@ void splash_window_unload(Window *window)
   text_layer_destroy(splash_logo);
 }
 
-int get_free_data_key()
-{
-  unsigned int i;
-  for (i=0; i<MAX_DATA_KEY; i++)
-  {
-    if (!persist_exists(i))
-      return i;
-  }
-  return -1;
-}
-
 void add_entry(char *data)
 {
-  unsigned data_len = strlen(data);
+  unsigned data_len = 32;
   char *byte_array;
   int ret;
 
@@ -208,6 +228,8 @@ void add_entry(char *data)
   ret = persist_read_int( 0 );
   if (ret == 0)
     persist_write_int(0, 1);
+  
+  memcpy( byte_array, data, 32);
   
   ret = get_free_data_key();
   persist_write_data(ret, byte_array, data_len);
@@ -245,7 +267,6 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
     }
     // Get next pair, if any
     t = dict_read_next(iterator);
-
   }
   
   if (name != NULL && number != NULL)
@@ -257,10 +278,35 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
     add_entry(data);
     free(data);
   }
+  setup_entry_db();
+}
+
+void clear_persist()
+{
+  unsigned int i;
+  for (i=0; i<MAX_DATA_KEY; i++)
+  {
+    if (persist_exists(i))
+      persist_delete(i);
+  }
 }
 
 void init()
 {
+    clear_persist();
+    char data1[32];
+    char data2[32];
+    memset(data1, 0, 32);
+    memset(data2, 0, 32);
+    strcpy(data1, "Tesco1");
+    strcpy(data1+11, "1234567890");
+    strcpy(data2, "Tesco");
+    strcpy(data2+11, "0987654321");
+  
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "data1 %s, %s", data1, data1+11);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "data2 %s, %s", data2, data2+11);
+    add_entry( data1 );
+    add_entry( data2 );
     setup_entry_db();
     menu_window = window_create();
     splash_window = window_create();
