@@ -30,7 +30,7 @@ typedef struct card_entry {
 
 char label[] = "card";
 
-struct card_entry *entry_db;
+struct card_entry *entry_db = NULL;
 
 int get_free_data_key()
 {
@@ -43,14 +43,29 @@ int get_free_data_key()
   return -1;
 }
 
+void free_entry_db()
+{
+  int i;
+  int num_entries = get_free_data_key();
+  for (i=1; i<num_entries; i++)
+  {
+    free(entry_db[i-1].title);
+    free(entry_db[i-1].data);
+  }
+  free(entry_db);
+}
+
 void setup_entry_db()
 {
   int i;
   int num_entries = get_free_data_key();
-  entry_db = malloc( sizeof(card_entry)*num_entries  );
   char *data_entry = malloc(32);
   int name_len = 0;
   
+  if (entry_db != NULL)
+    free_entry_db();
+  
+  entry_db = malloc( sizeof(card_entry)*num_entries  );
   for (i=1; i<num_entries; i++)
   {
     persist_read_data(i, data_entry, 32);
