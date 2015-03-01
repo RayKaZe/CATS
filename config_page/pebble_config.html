@@ -5,16 +5,12 @@
     <link rel="stylesheet" href="pebble_config.css">
     <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
   </head>
-
   <body>
     <h1>Pebble App Config</h1>
     <p>Do you even <a href="https://www.youtube.com/watch?v=1wIV6l2ux_8">Clubcard</a> bro?</p>
     Card Name: <input type="text" id="cardName" Placeholder="Tesco"><br><br>
     Number: <input type="number" id="cardNumber" Placeholder="123456" pattern="\d*"><br><br>
-    <br>
     <button id="addcard_button">Add card</button>
-
-    <br>
     <h3>Scan card:</h3>
     <div class="barcode">
       <input type="file" capture>
@@ -26,23 +22,18 @@
         <canvas class="drawingBuffer" width="320" height="241" style="display: block;"></canvas><br clear="all">
       </div>
     </div>
-        <h4>Saved Cards: </h4>
+        <h3>Saved Cards: </h4>
     <table>
       <tr>
-        <td>Something</td>
-        <td>Nothing</td>
-      </tr>
-      <tr>
-        <td>Push Me</td>
-        <td>Pull You</td>
-      </tr>
-      <tr>
-        <td>Ying</td>
-        <td>Yang</td>
+        <td>Something</td><td>Nothing</td><td class="rem"><button type="button">Remove</button></td>
+      </tr><tr>
+        <td>Push Me</td><td>Pull You</td><td class="rem"><button type="button">Remove</button></td>
+      </tr><tr>
+        <td>Ying</td><td>Yang</td><td class="rem"><button type="button">Remove</button></td>
       </tr>
     </table>
   </body>
-  <script src="pebble_config.js"></script>
+  <script src="js/pebble_config.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
   <script src="js/quagga.js" type="text/javascript"></script>
   <script src="js/file_input.js" type="text/javascript"></script>

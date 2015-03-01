@@ -16,6 +16,10 @@ td {
     padding: 5px;
 }
 
+td rem {
+  border: none;
+}
+
 .barcodeOutput {
     position: relative;
     width: 300px;
