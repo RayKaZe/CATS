@@ -8,7 +8,7 @@ Pebble.addEventListener("ready",
 Pebble.addEventListener("showConfiguration",
   function(e) {
     //Load the remote config page
-    Pebble.openURL("https://dl.dropboxusercontent.com/u/2666739/Hacklondon-Pebble/config_page/pebble_config.html");
+    Pebble.openURL("https://dl.dropboxusercontent.com/u/2575811/Hacklondon-Pebble/config_page/pebble_config.html");
   }
 );
 
@@ -18,7 +18,7 @@ Pebble.addEventListener("webviewclosed",
     //Get JSON dictionary
     var configuration = JSON.parse(decodeURIComponent(e.response));
     console.log("Configuration window returned: " + JSON.stringify(configuration));
- 
+
     //Send to Pebble, persist there
     var message = {"KEY_CARDNAME": configuration.name, "KEY_CARDNUMBER": configuration.number};
     console.log(JSON.stringify(message));
