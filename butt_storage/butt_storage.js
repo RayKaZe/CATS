@@ -10,19 +10,9 @@ function checkInput() {
 function saveOptions() {
     var cardName = document.getElementById("cardName");
     var cardNumber = document.getElementById("cardNumber");
-    var zeros1 = 11 - cardName.value.length;
-    var zeros2 = 11 - cardNumber.value.length;
-    // loads of nulls go here???
-    var options = {"name": cardName.value, "number": cardNumber.value};
+    var options = [cardName.value, cardNumber.value];
     return options;
 };
-
-function GSheets() {
-   var ss = SpreadsheetApp.getActiveSpreadsheet();
-   var sheet = ss.getSheets()[0];
-   var lastRow = sheet.getLastRow();
-
-}
    
 var submitButton = document.getElementById("addcard_button");
 submitButton.addEventListener("click", 
@@ -31,9 +21,25 @@ submitButton.addEventListener("click",
       alert("Incorrect card number")
       return;
     } else {
+      // check for/open current CSV
+      var allText =[];
+      //var Lines = [];
+      var txtFile = new XMLHttpRequest();
+      txtFile.open("GET", "http://warwickengineers.co.uk/newCards.csv", true);
+      txtFile.onreadystatechange = function() {
+          allText = txtFile.responseText;
+      }
+      // CSV shizzle
       var options = saveOptions();
-      var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(options));
-      document.location = location;
+      var data = "data:text/csv;charset=utf-8,";
+      data = options.join(",");
+      csvContent = allText + "\n" + data;
+      alert(csvContent)
+      txtFile.write(csvContent);
+      alert(txtFile);
+      
+
+
     }
   }, 
 false);
