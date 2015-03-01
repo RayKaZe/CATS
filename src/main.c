@@ -130,8 +130,11 @@ void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, 
  
 uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
 {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "list length: %i", get_free_data_key());
-  return get_free_data_key()-1;
+  int list_len =  get_free_data_key()-1;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "list length: %i", list_len);
+  if (list_len < 0)
+    return 0;
+  return list_len;
 }
  
 void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context)
@@ -149,6 +152,27 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
     default:
       APP_LOG(APP_LOG_LEVEL_WARNING, "Unrecognised Data Type");
    }
+}
+
+void clear_persist()
+{
+  unsigned int i;
+  for (i=0; i<MAX_DATA_KEY; i++)
+  {
+    if (persist_exists(i))
+      persist_delete(i);
+  }
+  menu_layer_reload_data(menu_layer);
+}
+
+void long_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+  clear_persist();
+}
+
+void config_provider(Window *window)
+{
+  window_long_click_subscribe(BUTTON_ID_UP, 0, long_click_handler, NULL);
 }
 
 void menu_window_load(Window *window)
@@ -208,6 +232,8 @@ void splash_window_load(Window *window)
   cat_inverter_layer = inverter_layer_create(cat_bounds);
   layer_add_child(window_get_root_layer(splash_window), inverter_layer_get_layer(cat_inverter_layer));
   
+  window_set_click_config_provider(splash_window, (ClickConfigProvider) config_provider);
+  
   app_timer_register(2000, splash_timer_callback, NULL);
 }
 
@@ -235,6 +261,7 @@ void add_entry(char *data)
   persist_write_data(ret, byte_array, data_len);
   
   free(byte_array);
+  menu_layer_reload_data(menu_layer);
 }
 
 static void in_recv_handler(DictionaryIterator *iterator, void *context)
@@ -274,26 +301,16 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
     data = malloc(32);
     strcpy( data, name );
     strcpy( data + 11, number );
-    
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "adding data %s, %s", data, data+11);
     add_entry(data);
     free(data);
   }
   setup_entry_db();
 }
 
-void clear_persist()
-{
-  unsigned int i;
-  for (i=0; i<MAX_DATA_KEY; i++)
-  {
-    if (persist_exists(i))
-      persist_delete(i);
-  }
-}
-
 void init()
 {
-    clear_persist();
+    /*clear_persist();
     char data1[32];
     char data2[32];
     memset(data1, 0, 32);
@@ -302,11 +319,12 @@ void init()
     strcpy(data1+11, "1234567890");
     strcpy(data2, "Tesco");
     strcpy(data2+11, "0987654321");
-  
+
     APP_LOG(APP_LOG_LEVEL_DEBUG, "data1 %s, %s", data1, data1+11);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "data2 %s, %s", data2, data2+11);
     add_entry( data1 );
     add_entry( data2 );
+    */
     setup_entry_db();
     menu_window = window_create();
     splash_window = window_create();
