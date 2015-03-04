@@ -12,14 +12,14 @@
     "resources": {
         "media": [
             {
-                "file": "images/SPLASH_CAT_LOGO.png",
-                "menuIcon": true,
-                "name": "SPLASH_CAT_LOGO",
+                "file": "images/SPLASH_CAT.png",
+                "name": "SPLASH_CAT",
                 "type": "png"
             },
             {
-                "file": "images/SPLASH_CAT.png",
-                "name": "SPLASH_CAT",
+                "file": "images/SPLASH_CAT_LOGO.png",
+                "menuIcon": true,
+                "name": "SPLASH_CAT_LOGO",
                 "type": "png"
             }
         ]
