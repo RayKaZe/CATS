@@ -6,15 +6,27 @@
     "capabilities": [
         ""
     ],
-    "companyName": "0x65.net",
-    "longName": "Barcodes",
+    "companyName": "",
+    "longName": "Card And Ticket Storage",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/SPLASH_CAT.png",
+                "name": "SPLASH_CAT",
+                "type": "png"
+            },
+            {
+                "file": "images/SPLASH_CAT_LOGO.png",
+                "menuIcon": true,
+                "name": "SPLASH_CAT_LOGO",
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "2",
-    "shortName": "Barcodes",
-    "uuid": "98c8ac72-b795-44f2-a279-ba831d48e9c9",
+    "shortName": "CATS",
+    "uuid": "0e5c291e-2ea7-48d4-8056-fa05c51d347d",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
