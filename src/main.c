@@ -1,6 +1,8 @@
 #include <pebble.h>
-#include <barcode.h>
 #include <inttypes.h>
+
+#include "barcode.h"
+#include "database.h"
 
 Window* menu_window;
 Window* bar_code_window;
@@ -12,80 +14,11 @@ static BitmapLayer *splash_cat_bitmap_layer;
 InverterLayer *cat_inverter_layer;
 BitmapLayer *barcode;
 TextLayer *footer;
+GBitmap *bmp1;
 
 #define MARGIN 5
-#define MAX_DATA_KEY 30
 #define KEY_CARDNAME 0
 #define KEY_CARDNUMBER 1
-
-typedef enum {
-  BARCODE,
-  QRCODE,
-} data_type;
-
-typedef struct card_entry {
-  data_type data_type;
-  char *title;
-  char *data;
-} card_entry;
-
-char label[] = "card";
-
-struct card_entry *entry_db = NULL;
-
-int get_free_data_key()
-{
-  unsigned int i;
-  for (i=0; i<MAX_DATA_KEY; i++)
-  {
-    if (!persist_exists(i))
-      return i;
-  }
-  return -1;
-}
-
-void free_entry_db()
-{
-  int i;
-  int num_entries = get_free_data_key();
-  for (i=1; i<num_entries; i++)
-  {
-    free(entry_db[i-1].title);
-    free(entry_db[i-1].data);
-  }
-  free(entry_db);
-}
-
-void setup_entry_db()
-{
-  int i;
-  int num_entries = get_free_data_key();
-  char *data_entry = malloc(32);
-  int name_len = 0;
-  
-  if (entry_db != NULL)
-    free_entry_db();
-  
-  entry_db = malloc( sizeof(card_entry)*num_entries  );
-  for (i=1; i<num_entries; i++)
-  {
-    persist_read_data(i, data_entry, 32);
-    
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "data_entry: %s", data_entry);
-    entry_db[i-1].data_type = BARCODE;
-    
-    name_len = strlen(data_entry);
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "name_len: %i", name_len );
-    
-    entry_db[i-1].title = malloc( name_len+1 );    
-    strncpy( entry_db[i-1].title, data_entry, name_len );
-
-    entry_db[i-1].data = malloc( strlen(data_entry+11) + 1 );
-    strncpy( entry_db[i-1].data, data_entry+11, strlen(data_entry+11) );
-    
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "entry: %s, %s", entry_db[i-1].title, entry_db[i-1].data );
-  }
-}
 
 void bar_code_window_load(Window *window)
 {
@@ -94,20 +27,20 @@ void bar_code_window_load(Window *window)
   GRect bounds = layer_get_bounds(windowLayer);
 	bounds.origin.y += MARGIN;
 	bounds.size.h -= 2 * MARGIN;
-  bmp = gbitmap_create_blank(bounds.size);
+  bmp1 = gbitmap_create_blank(bounds.size);
   barcode = bitmap_layer_create(bounds);
 	
 	bitmap_layer_set_alignment(barcode, GAlignCenter);
 	
 	// Width in bytes, aligned to multiples of 4.
-	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
-	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
+	bmp1->row_size_bytes = (bounds.size.w/8+3) & ~3;
+	bmp1->addr = malloc(bounds.size.h * bmp1->row_size_bytes);
   
   APP_LOG(APP_LOG_LEVEL_INFO, "bar_code_window_load, data: %s", data->data);
   
-  bmp->bounds.size.h = drawCode128(data->data);
+  bmp1->bounds.size.h = drawCode128(data->data);
   
-  bitmap_layer_set_bitmap(barcode, bmp);
+  bitmap_layer_set_bitmap(barcode, bmp1);
   
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(barcode));
   
@@ -127,11 +60,11 @@ void bar_code_window_load(Window *window)
 void bar_code_window_unload(Window *window)
 {
     bitmap_layer_destroy(barcode);
-    gbitmap_destroy(bmp);
+    gbitmap_destroy(bmp1);
     text_layer_destroy(footer);
 }
 
-void display_bar_code( char *data )
+void display_bar_code( struct card_entry * data )
 {
   APP_LOG(APP_LOG_LEVEL_INFO, "Displaying BARCODE\n");
   bar_code_window = window_create();
@@ -153,8 +86,9 @@ void display_qr_code( char *data)
 
 void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context)
 {
-  APP_LOG(APP_LOG_LEVEL_INFO, "string %s", (entry_db[cell_index->row].title));
-  menu_cell_basic_draw(ctx, cell_layer, entry_db[cell_index->row].title, entry_db[cell_index->row].data, NULL);
+  struct card_entry entry = get_entry(cell_index->row);
+  APP_LOG(APP_LOG_LEVEL_INFO, "string %s", (entry.title));
+  menu_cell_basic_draw(ctx, cell_layer, entry.title, entry.data, NULL);
 }
  
 uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
@@ -170,28 +104,18 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
 {
   //Get which row
   int which = cell_index->row;
+  struct card_entry entry = get_entry(which);
 
-  switch (entry_db[which].data_type) {
+  switch (entry.data_type) {
     case BARCODE:  
-      display_bar_code((char *)&entry_db[which]);
+      display_bar_code( &entry );
       break;
     case QRCODE:
-      display_qr_code(entry_db[which].data);
+      //display_qr_code(entry_db[which].data);
       break;
     default:
       APP_LOG(APP_LOG_LEVEL_WARNING, "Unrecognised Data Type");
    }
-}
-
-void clear_persist()
-{
-  unsigned int i;
-  for (i=0; i<MAX_DATA_KEY; i++)
-  {
-    if (persist_exists(i))
-      persist_delete(i);
-  }
-  menu_layer_reload_data(menu_layer);
 }
 
 void long_click_handler(ClickRecognizerRef recognizer, void *context)
@@ -272,27 +196,6 @@ void splash_window_unload(Window *window)
   text_layer_destroy(splash_logo);
 }
 
-void add_entry(char *data)
-{
-  unsigned data_len = 32;
-  char *byte_array;
-  int ret;
-
-  byte_array = malloc(data_len);
-
-  ret = persist_read_int( 0 );
-  if (ret == 0)
-    persist_write_int(0, 1);
-  
-  memcpy( byte_array, data, 32);
-  
-  ret = get_free_data_key();
-  persist_write_data(ret, byte_array, data_len);
-  
-  free(byte_array);
-  menu_layer_reload_data(menu_layer);
-}
-
 static void in_recv_handler(DictionaryIterator *iterator, void *context)
 {
   //Get Tuple
@@ -305,7 +208,7 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
   
   while (t != NULL)
   {
-    app_log(APP_LOG_LEVEL_INFO,"main.c",44,"%" PRIu32,t->key);
+    //app_log(APP_LOG_LEVEL_INFO,"main.c",44,"%" PRIu32,t->key);
     switch(t->key)
     {
     case KEY_CARDNAME:
