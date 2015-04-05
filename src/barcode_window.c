@@ -9,7 +9,7 @@ BitmapLayer *barcode;
 TextLayer *footer;
 GBitmap *bmp1;
 
-void bar_code_window_load(Window *window)
+void barcode_window_load(Window *window)
 {
   Layer *windowLayer = window_get_root_layer(window);
 	card_entry *data = (card_entry *) window_get_user_data(window);
@@ -25,7 +25,7 @@ void bar_code_window_load(Window *window)
 	bmp1->row_size_bytes = (bounds.size.w/8+3) & ~3;
 	bmp1->addr = malloc(bounds.size.h * bmp1->row_size_bytes);
   
-  APP_LOG(APP_LOG_LEVEL_INFO, "bar_code_window_load, data: %s", data->data);
+  APP_LOG(APP_LOG_LEVEL_INFO, "barcode_window_load, data: %s", data->data);
   
   bmp1->bounds.size.h = drawCode128(data->data);
   
@@ -46,7 +46,7 @@ void bar_code_window_load(Window *window)
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(footer));
 }
 
-void bar_code_window_unload(Window *window)
+void barcode_window_unload(Window *window)
 {
     bitmap_layer_destroy(barcode);
     gbitmap_destroy(bmp1);
@@ -58,8 +58,8 @@ void display_bar_code( struct card_entry * data )
   APP_LOG(APP_LOG_LEVEL_INFO, "Displaying BARCODE\n");
   bar_code_window = window_create();
   WindowHandlers handlers = {
-    .load = bar_code_window_load,
-    .unload = bar_code_window_unload
+    .load = barcode_window_load,
+    .unload = barcode_window_unload
   };
   window_set_window_handlers(bar_code_window, (WindowHandlers) handlers);
   window_set_fullscreen(bar_code_window, true);
