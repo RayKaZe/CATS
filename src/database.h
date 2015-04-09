@@ -3,6 +3,7 @@
 typedef enum {
   BARCODE,
   QRCODE,
+  UNDEFINED
 } data_type;
 
 typedef struct card_entry {

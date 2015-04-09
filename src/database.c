@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "database.h"
+#include "menu_window.h"
 
 struct card_entry *entry_db = NULL;
 
@@ -53,7 +54,8 @@ void setup_entry_db()
     entry_db[i-1].data = malloc( strlen(data_entry+11) + 1 );
     strncpy( entry_db[i-1].data, data_entry+11, strlen(data_entry+11) );
     
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "entry: %s, %s", entry_db[i-1].title, entry_db[i-1].data );
+    APP_LOG( APP_LOG_LEVEL_DEBUG, "entry: %s, %s",
+      entry_db[i-1].title, entry_db[i-1].data );
   }
 }
 
@@ -62,9 +64,11 @@ void clear_persist()
   unsigned int i;
   for (i=0; i<MAX_DATA_KEY; i++)
   {
+    APP_LOG( APP_LOG_LEVEL_DEBUG, "persist: %i", i );
     if (persist_exists(i))
       persist_delete(i);
   }
+  menu_window_reload();
 }
 
 void add_entry(char *data)
@@ -85,9 +89,15 @@ void add_entry(char *data)
   persist_write_data(ret, byte_array, data_len);
   
   free(byte_array);
+  menu_window_reload();
 }
 
 struct card_entry get_entry( int key )
 {
-	return entry_db[key];
+  struct card_entry entry;
+  entry.data_type = UNDEFINED;
+  
+  if ( !persist_exists(key) )
+    return entry;
+  return entry_db[key];
 }

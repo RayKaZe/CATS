@@ -64,6 +64,11 @@ void menu_window_unload(Window *window)
   menu_layer_destroy(menu_layer);
 }
 
+void menu_window_reload()
+{
+  menu_layer_reload_data(menu_layer);
+}
+
 void menu_window_init()
 {
   menu_window = window_create();

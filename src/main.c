@@ -9,7 +9,13 @@
 
 void init()
 {
-  /*clear_persist();
+  setup_entry_db();
+  menu_window_init();
+  splash_window_init();
+  app_comms_init();
+  
+  clear_persist();
+
   char data1[32];
   char data2[32];
   memset(data1, 0, 32);
@@ -23,11 +29,6 @@ void init()
   APP_LOG(APP_LOG_LEVEL_DEBUG, "data2 %s, %s", data2, data2+11);
   add_entry( data1 );
   add_entry( data2 );
-  */
-  setup_entry_db();
-  menu_window_init();
-  splash_window_init();
-  app_comms_init();
 }
 
 void deinit()
