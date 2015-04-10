@@ -12,23 +12,23 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
   char *number = NULL;
   int name_len = 0;
   int number_len = 0;
-  char *data = NULL;
+  struct card_entry entry;
   
   while (t != NULL)
   {
     //app_log(APP_LOG_LEVEL_INFO,"main.c",44,"%" PRIu32,t->key);
     switch(t->key)
     {
-    case KEY_CARDNAME:
+      case KEY_CARDNAME:
         app_log(APP_LOG_LEVEL_INFO,"main.c",48,"%s",t->value->cstring);
         name_len = strlen( t->value->cstring );
-        name = malloc(name_len);
+        name = malloc(name_len+1);
         strcpy( name, t->value->cstring );
         break;
-    case KEY_CARDNUMBER:
+      case KEY_CARDNUMBER:
         app_log(APP_LOG_LEVEL_INFO,"main.c",53,"%s",t->value->cstring);
         number_len = strlen( t->value->cstring );
-        number = malloc(number_len);
+        number = malloc(number_len+1);
         strcpy( number, t->value->cstring );
         break;
     }
@@ -38,14 +38,14 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
   
   if (name != NULL && number != NULL)
   {
-    data = malloc(32);
-    strcpy( data, name );
-    strcpy( data + 11, number );
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "adding data %s, %s", data, data+11);
-    add_entry(data);
-    free(data);
+    entry.data_type = BARCODE;
+    entry.title = name;
+    entry.data = number;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "adding data %s, %s", entry.title, entry.data);
+    add_entry(entry);
+    free(name);
+    free(number);
   }
-  setup_entry_db();
 }
 
 void app_comms_init()

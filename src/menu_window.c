@@ -7,14 +7,15 @@ Window* menu_window;
 
 void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context)
 {
-  struct card_entry entry = get_entry(cell_index->row);
+  struct card_entry entry;
+  entry = get_nth_entry(cell_index->row);
   APP_LOG(APP_LOG_LEVEL_INFO, "string %s", (entry.title));
   menu_cell_basic_draw(ctx, cell_layer, entry.title, entry.data, NULL);
 }
  
 uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
 {
-  int list_len =  get_free_data_key()-1;
+  int list_len =  num_entries();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "list length: %i", list_len);
   if (list_len < 0)
     return 0;
@@ -25,7 +26,9 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
 {
   //Get which row
   int which = cell_index->row;
-  struct card_entry entry = get_entry(which);
+  struct card_entry entry;
+
+  entry = get_nth_entry(which);
 
   switch (entry.data_type) {
     case BARCODE:  

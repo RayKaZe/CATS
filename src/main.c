@@ -9,26 +9,18 @@
 
 void init()
 {
-  setup_entry_db();
+  struct card_entry entry;
+
   menu_window_init();
   splash_window_init();
   app_comms_init();
   
   clear_persist();
-
-  char data1[32];
-  char data2[32];
-  memset(data1, 0, 32);
-  memset(data2, 0, 32);
-  strcpy(data1, "Tesco1");
-  strcpy(data1+11, "1234567890");
-  strcpy(data2, "Tesco");
-  strcpy(data2+11, "0987654321");
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "data1 %s, %s", data1, data1+11);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "data2 %s, %s", data2, data2+11);
-  add_entry( data1 );
-  add_entry( data2 );
+  entry.data_type = BARCODE;
+  entry.title = "Tesco1";
+  entry.data = "1234567890";
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "entry %s, %s", entry.title, entry.data);
+  add_entry( entry );
 }
 
 void deinit()

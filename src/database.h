@@ -13,8 +13,8 @@ typedef struct card_entry {
 } card_entry;
 
 int get_free_data_key();
-void free_entry_db();
-void setup_entry_db();
+unsigned int num_entries();
+struct card_entry get_nth_entry(unsigned int n);
 void clear_persist();
-void add_entry(char *data);
+void add_entry(struct card_entry entry);
 struct card_entry get_entry( int key );

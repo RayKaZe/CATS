@@ -1,6 +1,9 @@
 #include <pebble.h>
 #include "database.h"
 #include "menu_window.h"
+#include "string.h"
+
+/*Data format: |Type (1 byte)|Title len (1)|Data len (1)|Title str|Data|*/
 
 struct card_entry *entry_db = NULL;
 
@@ -15,48 +18,36 @@ int get_free_data_key()
   return -1;
 }
 
-void free_entry_db()
+unsigned int num_entries()
 {
-  int i;
-  int num_entries = get_free_data_key();
-  for (i=1; i<num_entries; i++)
+  unsigned int i;
+  unsigned int count = 0;
+
+  for (i=0; i<MAX_DATA_KEY; i++)
   {
-    free(entry_db[i-1].title);
-    free(entry_db[i-1].data);
+    if (persist_exists(i))
+      count++;
   }
-  free(entry_db);
+  return count;
 }
 
-void setup_entry_db()
+struct card_entry get_nth_entry(unsigned int n)
 {
-  int i;
-  int num_entries = get_free_data_key();
-  char *data_entry = malloc(32);
-  int name_len = 0;
-  
-  if (entry_db != NULL)
-    free_entry_db();
-  
-  entry_db = malloc( sizeof(card_entry)*num_entries  );
-  for (i=1; i<num_entries; i++)
-  {
-    persist_read_data(i, data_entry, 32);
-    
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "data_entry: %s", data_entry);
-    entry_db[i-1].data_type = BARCODE;
-    
-    name_len = strlen(data_entry);
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "name_len: %i", name_len );
-    
-    entry_db[i-1].title = malloc( name_len+1 );    
-    strncpy( entry_db[i-1].title, data_entry, name_len );
+  unsigned int i;
+  unsigned int count = 0;
+  struct card_entry entry;
+  entry.data_type = UNDEFINED;
 
-    entry_db[i-1].data = malloc( strlen(data_entry+11) + 1 );
-    strncpy( entry_db[i-1].data, data_entry+11, strlen(data_entry+11) );
-    
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "entry: %s, %s",
-      entry_db[i-1].title, entry_db[i-1].data );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "get %ith entry", n);
+
+  for (i=0; i<MAX_DATA_KEY; i++)
+  {
+    if (persist_exists(i))
+      count++;
+    if (count == n)
+      return get_entry(n);
   }
+  return entry;
 }
 
 void clear_persist()
@@ -64,40 +55,62 @@ void clear_persist()
   unsigned int i;
   for (i=0; i<MAX_DATA_KEY; i++)
   {
-    APP_LOG( APP_LOG_LEVEL_DEBUG, "persist: %i", i );
     if (persist_exists(i))
       persist_delete(i);
   }
   menu_window_reload();
 }
 
-void add_entry(char *data)
+void add_entry(struct card_entry entry)
 {
-  unsigned data_len = 32;
   char *byte_array;
   int ret;
+  unsigned int title_len = strlen(entry.title);
+  unsigned int data_len  = strlen(entry.data );
 
-  byte_array = malloc(data_len);
+  unsigned int byte_array_len = 3 + title_len + data_len;
+  byte_array = malloc(byte_array_len);
 
-  ret = persist_read_int( 0 );
-  if (ret == 0)
-    persist_write_int(0, 1);
-  
-  memcpy( byte_array, data, 32);
+  byte_array[0] = entry.data_type;
+  byte_array[1] = title_len;
+  byte_array[2] = data_len;
+  memcpy( byte_array+3, entry.title, title_len);
+  memcpy( byte_array+3+title_len, entry.data, data_len);
   
   ret = get_free_data_key();
-  persist_write_data(ret, byte_array, data_len);
-  
+
+  persist_write_data(ret, byte_array, byte_array_len);
+
   free(byte_array);
   menu_window_reload();
+
+  return;
 }
 
 struct card_entry get_entry( int key )
 {
   struct card_entry entry;
   entry.data_type = UNDEFINED;
-  
+  const int BUF_SIZE = 128;
+  char byte_array[BUF_SIZE];
+  unsigned int title_len, data_len;
+
   if ( !persist_exists(key) )
     return entry;
-  return entry_db[key];
+  else
+    persist_read_data(key, byte_array, BUF_SIZE);
+    
+    entry.data_type = byte_array[0];
+    title_len       = byte_array[1];
+    data_len        = byte_array[2];
+
+    entry.title = malloc(title_len+1);
+    entry.data  = malloc(data_len +1);
+
+    memcpy( entry.title, &byte_array[3],           title_len );
+    memcpy( entry.data,  &byte_array[3+title_len], data_len  );
+    entry.title[title_len] = 0;
+    entry.data[data_len]   = 0;
+
+    return entry;
 }
