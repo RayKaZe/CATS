@@ -12,7 +12,6 @@ void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, 
   APP_LOG(APP_LOG_LEVEL_INFO, "which: %i", which);
 
   entry = get_nth_entry(which);
-  assert(entry.data_type != UNDEFINED);
 
   menu_cell_basic_draw(ctx, cell_layer, entry.title, entry.data, NULL);
 }
