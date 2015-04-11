@@ -31,7 +31,7 @@ void splash_timer_callback()
 void splash_window_load(Window *window)
 {
   GRect cat_bounds= GRect(22, 65, 99, 77);
-  
+
   // Create time TextLayer
   splash_logo = text_layer_create(GRect(0, 10, 144, 50));
   text_layer_set_background_color(splash_logo, GColorClear);
@@ -44,26 +44,26 @@ void splash_window_load(Window *window)
 
   // Add it as a child layer to the Window's root layer
   layer_add_child(window_get_root_layer(splash_window), text_layer_get_layer(splash_logo));
-  
+
   // cat image
   splash_cat_bitmap = gbitmap_create_with_resource(RESOURCE_ID_SPLASH_CAT);
-  
+
   splash_cat_bitmap_layer = bitmap_layer_create(cat_bounds);
   bitmap_layer_set_bitmap(splash_cat_bitmap_layer, splash_cat_bitmap);
   layer_add_child(window_get_root_layer(splash_window), bitmap_layer_get_layer(splash_cat_bitmap_layer));
-  
+
   cat_inverter_layer = inverter_layer_create(cat_bounds);
   layer_add_child(window_get_root_layer(splash_window), inverter_layer_get_layer(cat_inverter_layer));
-  
+
   window_set_click_config_provider(splash_window, (ClickConfigProvider) config_provider);
-  
+
   app_timer_register(2000, splash_timer_callback, NULL);
 }
 
 void splash_window_init()
 {
   splash_window = window_create();
-  
+
   WindowHandlers handlers = {
     .load = splash_window_load,
     .unload = splash_window_unload

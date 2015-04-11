@@ -14,7 +14,7 @@ void init()
   menu_window_init();
   splash_window_init();
   app_comms_init();
-  
+
   clear_persist();
   entry.data_type = BARCODE;
   entry.title = "Tesco1";
@@ -32,7 +32,7 @@ void deinit()
 {
   menu_window_deinit();
 }
- 
+
 int main(void)
 {
   init();

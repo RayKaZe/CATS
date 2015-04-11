@@ -13,7 +13,7 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
   int name_len = 0;
   int number_len = 0;
   struct card_entry entry;
-  
+
   while (t != NULL)
   {
     //app_log(APP_LOG_LEVEL_INFO,"main.c",44,"%" PRIu32,t->key);
@@ -35,7 +35,7 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
     // Get next pair, if any
     t = dict_read_next(iterator);
   }
-  
+
   if (name != NULL && number != NULL)
   {
     entry.data_type = BARCODE;

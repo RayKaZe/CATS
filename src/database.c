@@ -76,7 +76,7 @@ void add_entry(struct card_entry entry)
   byte_array[2] = data_len;
   memcpy( byte_array+3, entry.title, title_len);
   memcpy( byte_array+3+title_len, entry.data, data_len);
-  
+
   ret = get_free_data_key();
 
   persist_write_data(ret, byte_array, byte_array_len);
@@ -102,7 +102,7 @@ struct card_entry get_entry( int key )
     return entry;
   else
     persist_read_data(key, byte_array, BUF_SIZE);
-    
+
     entry.data_type = byte_array[0];
     title_len       = byte_array[1];
     data_len        = byte_array[2];

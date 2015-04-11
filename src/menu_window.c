@@ -10,20 +10,20 @@ void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, 
   struct card_entry entry;
   unsigned int which = cell_index->row+1;
   APP_LOG(APP_LOG_LEVEL_INFO, "which: %i", which);
-  
+
   entry = get_nth_entry(which);
   assert(entry.data_type != UNDEFINED);
 
   menu_cell_basic_draw(ctx, cell_layer, entry.title, entry.data, NULL);
 }
- 
+
 uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
 {
   uint16_t list_len = num_entries();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "list length: %i", list_len);
   return list_len;
 }
- 
+
 void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context)
 {
   //Get which row
@@ -33,7 +33,7 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
   entry = get_nth_entry(which);
 
   switch (entry.data_type) {
-    case BARCODE:  
+    case BARCODE:
       display_bar_code( &entry );
       break;
     case QRCODE:

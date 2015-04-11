@@ -17,26 +17,26 @@ void barcode_window_load(Window *window)
 	bounds.size.h -= 2 * MARGIN;
   bmp = gbitmap_create_blank(bounds.size);
   barcode = bitmap_layer_create(bounds);
-	
+
 	bitmap_layer_set_alignment(barcode, GAlignCenter);
-	
+
 	// Width in bytes, aligned to multiples of 4.
 	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
 	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
-  
+
   APP_LOG(APP_LOG_LEVEL_INFO, "barcode_window_load, data: %s", data->data);
-  
+
   bmp->bounds.size.h = drawCode128(data->data);
-  
+
   bitmap_layer_set_bitmap(barcode, bmp);
-  
+
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(barcode));
-  
+
   // Create time TextLayer
   footer = text_layer_create(GRect(0, 140, 144, 30));
   text_layer_set_background_color(footer, GColorClear);
   text_layer_set_text_color(footer, GColorBlack);
-  
+
   // Improve the layout to be more like a watchface
   text_layer_set_font(footer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(footer, GTextAlignmentCenter);
