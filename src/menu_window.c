@@ -8,24 +8,26 @@ Window* menu_window;
 void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context)
 {
   struct card_entry entry;
-  entry = get_nth_entry(cell_index->row);
-  APP_LOG(APP_LOG_LEVEL_INFO, "string %s", (entry.title));
+  unsigned int which = cell_index->row+1;
+  APP_LOG(APP_LOG_LEVEL_INFO, "which: %i", which);
+  
+  entry = get_nth_entry(which);
+  assert(entry.data_type != UNDEFINED);
+
   menu_cell_basic_draw(ctx, cell_layer, entry.title, entry.data, NULL);
 }
  
 uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
 {
-  int list_len =  num_entries();
+  uint16_t list_len = num_entries();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "list length: %i", list_len);
-  if (list_len < 0)
-    return 0;
   return list_len;
 }
  
 void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context)
 {
   //Get which row
-  int which = cell_index->row;
+  int which = cell_index->row+1;
   struct card_entry entry;
 
   entry = get_nth_entry(which);

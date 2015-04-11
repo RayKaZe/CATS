@@ -105,7 +105,6 @@ char* charLookup[] = {
   "10111011110",
 };
 
-GBitmap *bmp;
 
 //static char* startA = "11010000100";
 //static char* startC = "11010010000";

@@ -18,10 +18,10 @@ int get_free_data_key()
   return -1;
 }
 
-unsigned int num_entries()
+uint16_t num_entries()
 {
-  unsigned int i;
-  unsigned int count = 0;
+  uint16_t i;
+  uint16_t count = 0;
 
   for (i=0; i<MAX_DATA_KEY; i++)
   {
@@ -45,7 +45,7 @@ struct card_entry get_nth_entry(unsigned int n)
     if (persist_exists(i))
       count++;
     if (count == n)
-      return get_entry(n);
+      return get_entry(i);
   }
   return entry;
 }
@@ -81,6 +81,8 @@ void add_entry(struct card_entry entry)
 
   persist_write_data(ret, byte_array, byte_array_len);
 
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "add entry: key %i", ret);
+
   free(byte_array);
   menu_window_reload();
 
@@ -89,6 +91,7 @@ void add_entry(struct card_entry entry)
 
 struct card_entry get_entry( int key )
 {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "get entry: key %i", key);
   struct card_entry entry;
   entry.data_type = UNDEFINED;
   const int BUF_SIZE = 128;

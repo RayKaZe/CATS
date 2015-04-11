@@ -49,13 +49,11 @@ static char* charLookup[] = {
 	['*'] = "bWbwBwBwb",
 };
 
-GBitmap *bmp2;
-
 static char* drawBar(char *buf, char val) {
-	for (int i = 0; i < bmp2->row_size_bytes; i++) {
+	for (int i = 0; i < bmp->row_size_bytes; i++) {
 		buf[i] = val;
 	}
-	return buf + bmp2->row_size_bytes;
+	return buf + bmp->row_size_bytes;
 }
 
 static char* drawChar(char *buf, char *c) {
@@ -83,8 +81,8 @@ static int charWidth = 13; // Each char is 13px wide. 6 narrow, 3 wide, 1 delime
 int drawCode39(char *word) {
 	// TODO check the size of the word against the max width for the bitmap.
 	int count = 0;
-	char *buf = (char*)bmp2->addr;
-	memset(bmp2->addr, 0xFF, bmp2->bounds.size.h * bmp2->row_size_bytes);
+	char *buf = (char*)bmp->addr;
+	memset(bmp->addr, 0xFF, bmp->bounds.size.h * bmp->row_size_bytes);
 	buf = drawChar(buf, charLookup['*']);
 	while (*word != '\0') {
 		buf = drawChar(buf, charLookup[(int)*word]);

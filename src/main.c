@@ -21,6 +21,11 @@ void init()
   entry.data = "1234567890";
   APP_LOG(APP_LOG_LEVEL_DEBUG, "entry %s, %s", entry.title, entry.data);
   add_entry( entry );
+  entry.title = "Tesco2";
+  entry.data = "0123456789";
+  add_entry( entry );
+  entry = get_nth_entry(2);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "entry %s, %s", entry.title, entry.data);
 }
 
 void deinit()

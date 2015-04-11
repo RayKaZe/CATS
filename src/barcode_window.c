@@ -7,7 +7,6 @@
 Window* bar_code_window;
 BitmapLayer *barcode;
 TextLayer *footer;
-GBitmap *bmp1;
 
 void barcode_window_load(Window *window)
 {
@@ -16,20 +15,20 @@ void barcode_window_load(Window *window)
   GRect bounds = layer_get_bounds(windowLayer);
 	bounds.origin.y += MARGIN;
 	bounds.size.h -= 2 * MARGIN;
-  bmp1 = gbitmap_create_blank(bounds.size);
+  bmp = gbitmap_create_blank(bounds.size);
   barcode = bitmap_layer_create(bounds);
 	
 	bitmap_layer_set_alignment(barcode, GAlignCenter);
 	
 	// Width in bytes, aligned to multiples of 4.
-	bmp1->row_size_bytes = (bounds.size.w/8+3) & ~3;
-	bmp1->addr = malloc(bounds.size.h * bmp1->row_size_bytes);
+	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
+	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
   
   APP_LOG(APP_LOG_LEVEL_INFO, "barcode_window_load, data: %s", data->data);
   
-  bmp1->bounds.size.h = drawCode128(data->data);
+  bmp->bounds.size.h = drawCode128(data->data);
   
-  bitmap_layer_set_bitmap(barcode, bmp1);
+  bitmap_layer_set_bitmap(barcode, bmp);
   
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(barcode));
   
@@ -49,7 +48,7 @@ void barcode_window_load(Window *window)
 void barcode_window_unload(Window *window)
 {
     bitmap_layer_destroy(barcode);
-    gbitmap_destroy(bmp1);
+    gbitmap_destroy(bmp);
     text_layer_destroy(footer);
 }
 
