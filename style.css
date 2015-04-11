@@ -1,43 +1,30 @@
-html {
-    font-family: sans-serif;
-    background-color: #f8f8f8;
-    font-color: #111;
+body {
+    background-color: #333;
+    font-family: 'Press Start 2P', cursive; 
+    color: #eee;
 }
-
-table {
-    border-collapse: collapse;
+h1 {
+    text-align: center;
 }
-
-table, td {
-    border: 1px solid black;
-}
-
-table {
-    width: 200px;
-}
-
-td {
-    width: 100px;
-    height: 30px;
-    padding: 5px;
-}
-
-td rem {
-  border: none;
+button, input {
+    color: #333;
 }
 
 .barcodeOutput {
     position: relative;
-    width: 300px;
+    width: screen.width;
     height:  241px;
 }
-
 .barcodeOutput canvas {
     position: absolute;
     top: 0;
     left: 0;
-    width: 300px;
+    width: screen.width;
 }
 .barcode {
     float: right;
+}
+
+table {
+    font-size: 10px;
 }

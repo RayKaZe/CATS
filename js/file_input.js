@@ -7,14 +7,16 @@ $(function() {
             reader: "code_128"
         },
         attachListeners: function() {
-            $(".barcode input[type=file]").on("change", function(e) {
+            // $("#filesubmit").on("change", function(e) {
+            $(document).on('click', '#filesubmit', function(e) {
+                // alert('ysfdaa');
                 if (e.target.files && e.target.files.length) {
                     App.decode(URL.createObjectURL(e.target.files[0]));
                 }
             });
         },
         detachListeners: function() {
-            $(".barcode input[type=file]").off("change");        },
+            $("#filesubmit").off("change");        },
         decode: function(src) {
             Quagga.decodeSingle({
                 decoder: {
@@ -62,10 +64,8 @@ $(function() {
             $node,
             canvas = Quagga.canvas.dom.image;
 
-        clubnumber = "63400" + code.slice(3);
-
-        $node = $('<div>Found these clubcards:</div><li><h4 class="code"><a href="#"></a> <small></small></h4></li>');
-        $node.find("h4.code a").html(clubnumber);
+        $node = $('<div>Found this card:</div><h4 class="code"><a href="#"></a> <small></small></h4>');
+        $node.find("h4.code a").html(code.slice(3));
         $node.find("h4.code small").html("("+code+")");
         $node.find("h4.code a").click(code, App.selectCodeListener);
         $("#baroutput").prepend($node);
