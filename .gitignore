@@ -31,3 +31,7 @@
 *.sublime-project
 
 *.sublime-workspace
+
+.lock-waf_darwin_build
+
+/build/
