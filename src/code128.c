@@ -114,10 +114,11 @@ static char* fnc = "11110101110";
 static char* stop = "1100011101011";
 
 static char* drawBar(char *buf, char val) {
-	for (int i = 0; i < bmp->row_size_bytes; i++) {
+	uint8_t row_size = gbitmap_get_bytes_per_row(bmp);
+	for (int i = 0; i < row_size; i++) {
 		buf[i] = val;
 	}
-	return buf + bmp->row_size_bytes;
+	return buf + row_size;
 }
 
 static char* drawChar(char *buf, char *c) {
@@ -139,8 +140,10 @@ static int charWidth = 11;
 
 int drawCode128(char *c) {
 	int count = 2, sum = 207;
-	char *buf = (char*)bmp->addr;
-	memset(bmp->addr, 0xFF, bmp->bounds.size.h * bmp->row_size_bytes);
+	char *buf = (char *) gbitmap_get_data(bmp);
+	GRect bounds = gbitmap_get_bounds(bmp);
+	uint8_t row_size = gbitmap_get_bytes_per_row(bmp);
+	memset(buf, 0xFF, bounds.size.h * row_size);
 
 	//Start sign
 	buf = drawChar(buf, startC);
@@ -151,7 +154,6 @@ int drawCode128(char *c) {
 		c++;
 		int in2 = *c-48;
 		int number = in1 * 10 + in2;
-
 
 		buf = drawChar(buf, charLookup[number]);
 		app_log(APP_LOG_LEVEL_INFO, "code128.c", 151, "Number: %d", number);

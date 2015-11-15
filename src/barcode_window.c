@@ -4,9 +4,9 @@
 
 #define MARGIN 5
 
-Window* bar_code_window;
 BitmapLayer *barcode;
 TextLayer *footer;
+uint8_t *addr;
 
 void barcode_window_load(Window *window)
 {
@@ -15,18 +15,20 @@ void barcode_window_load(Window *window)
   GRect bounds = layer_get_bounds(windowLayer);
 	bounds.origin.y += MARGIN;
 	bounds.size.h -= 2 * MARGIN;
-  bmp = gbitmap_create_blank(bounds.size);
+  bmp = gbitmap_create_blank(bounds.size, GBitmapFormat1Bit);
   barcode = bitmap_layer_create(bounds);
 
 	bitmap_layer_set_alignment(barcode, GAlignCenter);
 
 	// Width in bytes, aligned to multiples of 4.
-	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
-	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
+  uint16_t row_size_bytes = (bounds.size.w/8+3) & ~3;
+  addr = malloc(bounds.size.h * row_size_bytes);
+  gbitmap_set_data(bmp, addr, GBitmapFormat1Bit, row_size_bytes, true);
 
   APP_LOG(APP_LOG_LEVEL_INFO, "barcode_window_load, data: %s", data->data);
 
-  bmp->bounds.size.h = drawCode128(data->data);
+  bounds.size.h = drawCode128(data->data);
+  gbitmap_set_bounds(bmp, bounds);
 
   bitmap_layer_set_bitmap(barcode, bmp);
 
@@ -45,15 +47,23 @@ void barcode_window_load(Window *window)
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(footer));
 }
 
+void barcode_window_destory(void *window) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Destroy window\n");
+  window_destroy((Window *) window);
+}
+
 void barcode_window_unload(Window *window)
 {
     bitmap_layer_destroy(barcode);
     gbitmap_destroy(bmp);
     text_layer_destroy(footer);
+    app_timer_register(100, barcode_window_destory, window);
 }
 
 void display_bar_code( struct card_entry * data )
 {
+  Window* bar_code_window;
+
   APP_LOG(APP_LOG_LEVEL_INFO, "Displaying BARCODE\n");
   bar_code_window = window_create();
   WindowHandlers handlers = {
@@ -61,13 +71,16 @@ void display_bar_code( struct card_entry * data )
     .unload = barcode_window_unload
   };
   window_set_window_handlers(bar_code_window, (WindowHandlers) handlers);
+#ifdef PBL_SDK_2
   window_set_fullscreen(bar_code_window, true);
+#endif
   window_set_user_data(bar_code_window, data);
   window_stack_push(bar_code_window, true);
 }
 
-void display_qr_code( char *data)
+void display_qr_code( char *data )
 {
   /* placeholder for when we want to implement the qr code */
   APP_LOG(APP_LOG_LEVEL_INFO, "Displaying QRCODE\n");
 }
+

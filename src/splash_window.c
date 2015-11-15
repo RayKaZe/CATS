@@ -5,7 +5,6 @@ Window* splash_window;
 TextLayer *splash_logo;
 static GBitmap *splash_cat_bitmap;
 static BitmapLayer *splash_cat_bitmap_layer;
-InverterLayer *cat_inverter_layer;
 
 void long_click_handler(ClickRecognizerRef recognizer, void *context)
 {
@@ -46,14 +45,11 @@ void splash_window_load(Window *window)
   layer_add_child(window_get_root_layer(splash_window), text_layer_get_layer(splash_logo));
 
   // cat image
-  splash_cat_bitmap = gbitmap_create_with_resource(RESOURCE_ID_SPLASH_CAT);
+  splash_cat_bitmap = gbitmap_create_with_resource(RESOURCE_ID_SPLASH_CAT_INVERT);
 
   splash_cat_bitmap_layer = bitmap_layer_create(cat_bounds);
   bitmap_layer_set_bitmap(splash_cat_bitmap_layer, splash_cat_bitmap);
   layer_add_child(window_get_root_layer(splash_window), bitmap_layer_get_layer(splash_cat_bitmap_layer));
-
-  cat_inverter_layer = inverter_layer_create(cat_bounds);
-  layer_add_child(window_get_root_layer(splash_window), inverter_layer_get_layer(cat_inverter_layer));
 
   window_set_click_config_provider(splash_window, (ClickConfigProvider) config_provider);
 
@@ -70,7 +66,9 @@ void splash_window_init()
   };
 
   window_set_window_handlers( splash_window, (WindowHandlers) handlers );
+#ifdef PBL_SDK_2
   window_set_fullscreen(splash_window, true);
+#endif
   window_set_background_color(splash_window, GColorBlack);
   window_stack_push(splash_window, false);
 }
