@@ -1,14 +1,15 @@
 {
   "appKeys": {
     "KEY_CARDNAME": 0,
-    "KEY_CARDNUMBER": 1
+    "KEY_CARDNUMBER": 1,
+    "NUM_ENTRIES": 2,
+    "GET_NTH_ENTRY": 3
   },
   "capabilities": [
     "configurable"
   ],
   "companyName": "",
   "longName": "Card And Ticket Storage",
-  "projectType": "native",
   "resources": {
     "media": [
       {
