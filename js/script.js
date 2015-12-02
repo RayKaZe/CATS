@@ -16,9 +16,9 @@ function saveOptions() {
     var options = {"name": cardName.value, "number": cardNumber.value};
     return options;
 };
-   
+
 var addcardButton = document.getElementById("addcard_button");
-addcardButton.addEventListener("click", 
+addcardButton.addEventListener("click",
   function() {
     if (checkInput() === 1) {
       return;
@@ -27,5 +27,35 @@ addcardButton.addEventListener("click",
       var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(options));
       document.location = location;
     }
-  }, 
+  },
 false);
+
+function getCards() {
+  var val    = "cards",
+      result = "Not found",
+      tmp    = [];
+  location.search.substr(1)
+    .split("&")
+    .forEach(function (item) {
+      tmp = item.split("=");
+      if (tmp[0] === val)
+        result = decodeURIComponent(tmp[1]);
+  });
+
+  result = decodeURIComponent(result);
+  result = JSON.parse(result)
+  return result;
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  var j = getCards();
+  var table = document.getElementById("tableOfCards");
+
+  for (var i=0; i<j.length; i++) {
+    var row = table.insertRow();
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = j[i].KEY_CARDNAME;
+    cell2.innerHTML = j[i].KEY_CARDNUMBER;
+  }
+});
