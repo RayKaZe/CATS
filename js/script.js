@@ -29,9 +29,7 @@ function getCards() {
 
 function updateTable () {
   var table = document.getElementById("tableOfCards");
-
-  // clear the table
-  table.innerHTML = "";
+  table.innerHTML = ""; // clear the table
 
   for (var i=0; i<cards.length; i++) {
     var row = table.insertRow();
@@ -51,6 +49,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
                   };
 
       cards.push(card);
+
+      // clear the input boxes
+      $("#cardName").val("");
+      $("#cardNumber").val("");
+
       updateTable();
     }
   })
