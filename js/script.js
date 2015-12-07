@@ -1,34 +1,14 @@
 function checkInput() {
-    //if (document.getElementById("cardNumber").value.length % 2 !==  0) { return 1; }
-    if (document.getElementById("cardNumber").value.length ===  0) { alert("Missing card number"); return 1; }
-    else if (document.getElementById("cardNumber").value.length >=  20) { alert("Card number too long"); return 1; }
-    else if (document.getElementById("cardName").value.length ===  0) { alert("Missing card name"); return 1; }
-    else if (document.getElementById("cardName").value.length >=  10) { alert("Card name too long"); return 1; }
-    else { return 0; }
-};
+    var cardNumberLen = $("#cardNumber").val().length
+    var cardNameLen   = $("#cardName"  ).val().length
 
-function saveOptions() {
-    var cardName = document.getElementById("cardName");
-    var cardNumber = document.getElementById("cardNumber");
-    var zeros1 = 11 - cardName.value.length;
-    var zeros2 = 11 - cardNumber.value.length;
-    // loads of nulls go here???
-    var options = {"name": cardName.value, "number": cardNumber.value};
-    return options;
-};
+    if      (cardNumberLen ===  0) { alert("Missing card number" ); return 1; }
+    else if (cardNumberLen >=  20) { alert("Card number too long"); return 1; }
+    else if (cardNameLen   ===  0) { alert("Missing card name"   ); return 1; }
+    else if (cardNameLen   >=  10) { alert("Card name too long"  ); return 1; }
 
-var addcardButton = document.getElementById("addcard_button");
-addcardButton.addEventListener("click",
-  function() {
-    if (checkInput() === 1) {
-      return;
-    } else {
-      var options = saveOptions();
-      var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(options));
-      document.location = location;
-    }
-  },
-false);
+    return 0;
+};
 
 function getCards() {
   var val    = "cards",
@@ -47,15 +27,40 @@ function getCards() {
   return result;
 }
 
-document.addEventListener("DOMContentLoaded", function(event) {
-  var j = getCards();
+function updateTable () {
   var table = document.getElementById("tableOfCards");
 
-  for (var i=0; i<j.length; i++) {
+  // clear the table
+  table.innerHTML = "";
+
+  for (var i=0; i<cards.length; i++) {
     var row = table.insertRow();
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
-    cell1.innerHTML = j[i].KEY_CARDNAME;
-    cell2.innerHTML = j[i].KEY_CARDNUMBER;
+    cell1.innerHTML = cards[i].KEY_CARDNAME;
+    cell2.innerHTML = cards[i].KEY_CARDNUMBER;
   }
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  $("#addcard_button").click( function () {
+    if (checkInput() === 0) {
+      var card = {
+                    "KEY_CARDNAME"   : $("#cardName").val(),
+                    "KEY_CARDNUMBER" : $("#cardNumber").val()
+                  };
+
+      cards.push(card);
+      updateTable();
+    }
+  })
+
+  $("#save_button").click( function() {
+    var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(cards));
+    console.log(location);
+    document.location = location;
+  });
+
+  cards = getCards();
+  updateTable();
 });
