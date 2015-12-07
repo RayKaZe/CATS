@@ -33,10 +33,23 @@ function updateTable () {
 
   for (var i=0; i<cards.length; i++) {
     var row = table.insertRow();
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    cell1.innerHTML = cards[i].KEY_CARDNAME;
-    cell2.innerHTML = cards[i].KEY_CARDNUMBER;
+    var cell0 = row.insertCell(0);
+    var cell1 = row.insertCell(1);
+    var cell2 = row.insertCell(2);
+    cell0.innerHTML = cards[i].KEY_CARDNAME;
+    cell1.innerHTML = cards[i].KEY_CARDNUMBER;
+    cell2.innerHTML = "<span class=\"glyphicon glyphicon-remove\"></span>";
+
+    cell2.onclick = function(event){
+      event.path.find( function (elem, ind, arr) {
+        if (elem.tagName === "TR") {
+          var i = elem.rowIndex;
+          console.log(i);
+          cards.splice(i, 1);
+          updateTable();
+        }
+      });
+    };
   }
 }
 
