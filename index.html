@@ -5,58 +5,54 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/quagga.js"></script>
+    <script src="js/file_input.js"></script>
     <link rel="stylesheet" href="style.css">
-
-      <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-      <link href='//fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
-      <title>Pebble Config Page</title>
+    <link href='//fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+    <title>Pebble Config Page</title>
   </head>
 
   <body>
     <div class="container">
-      <div>
-        <h1>Pebble App Config</h1>
-        <hr>
+      <h1>Pebble App Config</h1>
+      <hr>
 
-        <h4>Enter manually
-          <a href="https://www.youtube.com/watch?v=1wIV6l2ux_8">.</a>
-        </h4>
-        Card Name: <input type="text" id="cardName" Placeholder="Tesco"><br><br>
-        Number: <input type="number" id="cardNumber" Placeholder="123456" pattern="\d*"><br><br>
-        <button id="addcard_button">Add card</button>
-        <hr>
+      <h4>Saved Cards</h4>
+      <table id="tableOfCards" class="table">
+        <tr>
+          <th>Card Name</th>
+          <th>Card Number</th>
+        </tr>
+      </table>
+      <hr>
 
-        <h4 style="float:left; margin-top: 3px"> Or Scan Card</h4>
-        <div style="float:left; margin-left: 10px" class="barcode">
-          <input type='file' id="filesubmit"></input> 
-          <div id="baroutput"></div>
-        </div>
+      <h4>Enter Card Manually
+        <a href="https://www.youtube.com/watch?v=1wIV6l2ux_8">.</a>
+      </h4>
+      Card Name: <input type="text" id="cardName" Placeholder="Tesco"><br><br>
+      Number: <input type="number" id="cardNumber" Placeholder="123456" pattern="\d*"><br><br>
+      <button id="addcard_button">Add card</button>
+      <hr>
 
-        <div style="clear: both;"></div>
-        <div class="barcodeOutput">
-          <div id="interactive" class="viewport">
-            <canvas class="imgBuffer" width="100%" height="241"></canvas>
-            <canvas class="drawingBuffer" width="100%" height="241" style="display: block;"></canvas><br clear="all">
-          </div>
-        </div>
+      <h4 style="float:left; margin-top: 3px"> Or Scan Card</h4>
 
-        <h4>Saved Cards:</h4>
-        <table class="table">
-          <tr>
-            <td>Tesco</td><td class="rem"><button type="button">Remove</button></td>
-          </tr><tr>
-            <td>Costa</td><td class="rem"><button type="button">Remove</button></td>
-          </tr><tr>
-            <td>Ann Summers</td><td class="rem"><button type="button">Remove</button></td>
-          </tr>
-        </table>
+      <div style="float:left; margin-left: 10px" class="barcode">
+        <input type='file' id="filesubmit"></input>
+        <div id="baroutput"></div>
       </div>
-  </div><!-- /.container -->
 
+      <div style="clear: both;"></div>
+      <div class="barcodeOutput">
+        <div id="interactive" class="viewport">
+          <canvas class="imgBuffer" width="100%" height="241"></canvas>
+          <canvas class="drawingBuffer" width="100%" height="241" style="display: block;"></canvas><br clear="all">
+        </div>
+      </div>
+
+      <hr>
+      <button id="save_button">SAVE</button>
+    </div><!-- /.container -->
   </body>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/quagga.js"></script>
-  <script src="js/file_input.js"></script>
-  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> -->
 </html>

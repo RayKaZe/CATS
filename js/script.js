@@ -1,31 +1,103 @@
 function checkInput() {
-    //if (document.getElementById("cardNumber").value.length % 2 !==  0) { return 1; }
-    if (document.getElementById("cardNumber").value.length ===  0) { alert("Missing card number"); return 1; }
-    else if (document.getElementById("cardNumber").value.length >=  20) { alert("Card number too long"); return 1; }
-    else if (document.getElementById("cardName").value.length ===  0) { alert("Missing card name"); return 1; }
-    else if (document.getElementById("cardName").value.length >=  10) { alert("Card name too long"); return 1; }
-    else { return 0; }
+    var cardNumberLen = $("#cardNumber").val().length
+    var cardNameLen   = $("#cardName"  ).val().length
+
+    if      (cardNumberLen ===  0) { alert("Missing card number" ); return 1; }
+    else if (cardNumberLen >=  20) { alert("Card number too long"); return 1; }
+    else if (cardNameLen   ===  0) { alert("Missing card name"   ); return 1; }
+    else if (cardNameLen   >=  10) { alert("Card name too long"  ); return 1; }
+
+    return 0;
 };
 
-function saveOptions() {
-    var cardName = document.getElementById("cardName");
-    var cardNumber = document.getElementById("cardNumber");
-    var zeros1 = 11 - cardName.value.length;
-    var zeros2 = 11 - cardNumber.value.length;
-    // loads of nulls go here???
-    var options = {"name": cardName.value, "number": cardNumber.value};
-    return options;
-};
-   
-var addcardButton = document.getElementById("addcard_button");
-addcardButton.addEventListener("click", 
-  function() {
-    if (checkInput() === 1) {
-      return;
-    } else {
-      var options = saveOptions();
-      var location = 'pebblejs://close#'+ encodeURIComponent(JSON.stringify(options));
-      document.location = location;
+function getCards() {
+  var val    = "cards",
+      result = "Not found",
+      tmp    = [];
+  location.search.substr(1)
+    .split("&")
+    .forEach(function (item) {
+      tmp = item.split("=");
+      if (tmp[0] === val)
+        result = decodeURIComponent(tmp[1]);
+  });
+
+  result = decodeURIComponent(result);
+  result = JSON.parse(result)
+  return result;
+}
+
+function updateTable () {
+  var table = document.getElementById("tableOfCards");
+  table.innerHTML = ""; // clear the table
+
+  for (var i=0; i<cards.length; i++) {
+    var row = table.insertRow();
+    var cell0 = row.insertCell(0);
+    var cell1 = row.insertCell(1);
+    var cell2 = row.insertCell(2);
+    cell0.innerHTML = cards[i].KEY_CARDNAME;
+    cell1.innerHTML = cards[i].KEY_CARDNUMBER;
+    cell2.innerHTML = "<span class=\"glyphicon glyphicon-remove\"></span>";
+
+    cell2.onclick = function(event){
+      event.path.find( function (elem, ind, arr) {
+        if (elem.tagName === "TR") {
+          var i = elem.rowIndex;
+          console.log(i);
+          cards.splice(i, 1);
+          updateTable();
+        }
+      });
+    };
+  }
+}
+
+// Get query variables
+function getQueryParam(variable, defaultValue) {
+  // Find all URL parameters
+  var query = location.search.substring(1);
+  console.log("query", query);
+  var vars = query.split('&');
+  console.log("vars", vars)
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+
+    // If the query variable parameter is found, decode it to use and return it for use
+    if (pair[0] === variable) {
+      return decodeURIComponent(pair[1]);
     }
-  }, 
-false);
+  }
+  return defaultValue || false;
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  $("#addcard_button").click( function () {
+    if (checkInput() === 0) {
+      var card = {
+                    "KEY_CARDNAME"   : $("#cardName").val(),
+                    "KEY_CARDNUMBER" : $("#cardNumber").val()
+                  };
+
+      cards.push(card);
+
+      // clear the input boxes
+      $("#cardName").val("");
+      $("#cardNumber").val("");
+
+      updateTable();
+    }
+  })
+
+  $("#save_button").click( function() {
+    // Set the return URL depending on the runtime environment
+    var return_to = getQueryParam('return_to', 'pebblejs://close#');
+    console.log(return_to)
+    var location = return_to + encodeURIComponent(JSON.stringify(cards));
+    console.log(location);
+    document.location = location;
+  });
+
+  cards = getCards();
+  updateTable();
+});
