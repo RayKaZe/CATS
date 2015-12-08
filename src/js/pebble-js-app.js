@@ -22,21 +22,16 @@ Pebble.addEventListener("webviewclosed", function (e) {
     var configuration = JSON.parse(decodeURIComponent(e.response));
     console.log("Configuration window returned: " + JSON.stringify(configuration));
 
-    //Send to Pebble, persist there
-    var message = {
-      "KEY_CARDNAME"   : configuration.name,
-      "KEY_CARDNUMBER" : configuration.number
-    };
+    cards = configuration
 
-    console.log(JSON.stringify(message));
-
+    // clear data on watch
     Pebble.sendAppMessage(
-      message,
+      {CLEAR_PERSIST: true},
       function(e) {
-        console.log("Sending settings data...");
+        console.log("acked");
       },
       function(e) {
-        console.log("Settings feedback failed!");
+        console.log("nacked");
       }
     );
 });
@@ -64,8 +59,6 @@ function get_nth_entry(i) {
     );
 }
 
-cards = []
-
 Pebble.addEventListener("appmessage", function(e) {
   var dict = e.payload;
   console.log(JSON.stringify(dict));
@@ -73,6 +66,7 @@ Pebble.addEventListener("appmessage", function(e) {
   if (dict.NUM_ENTRIES!=undefined) {
     n = parseInt(dict.NUM_ENTRIES);
     if (n>0) {
+      cards = []
       get_nth_entry(1);
     }
   } else if (dict.GET_NTH_ENTRY != undefined) {
@@ -82,5 +76,27 @@ Pebble.addEventListener("appmessage", function(e) {
       get_nth_entry(dict.GET_NTH_ENTRY+1);
     }
     console.log("change something on the html");
+  } else if (dict.CLEAR_PERSIST === 1) {
+    sendNextMessage();
   }
 });
+
+function sendNextMessage() {
+  if (cards.length === 0) return;
+
+  var entry = cards.shift();
+
+  Pebble.sendAppMessage(
+    {
+      KEY_CARDNAME   : entry.KEY_CARDNAME,
+      KEY_CARDNUMBER : entry.KEY_CARDNUMBER
+    },
+    function (e) {
+      sendNextMessage();
+    },
+    function (e) {
+      cards.unshift(entry);
+      sendNextMessage();
+    }
+  );
+}

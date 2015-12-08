@@ -5,7 +5,8 @@ typedef enum {
   KEY_CARDNAME   = 0,
   KEY_CARDNUMBER = 1,
   NUM_ENTRIES    = 2,
-  GET_NTH_ENTRY  = 3
+  GET_NTH_ENTRY  = 3,
+  CLEAR_PERSIST  = 4
 } AppKey;
 
 static void send_num_entries() {
@@ -40,6 +41,14 @@ static void send_nth_entry(uint8_t *n) {
   app_message_outbox_send ();
 }
 
+static void ack_clear_persist() {
+  DictionaryIterator* dictionaryIterator = NULL;
+
+  app_message_outbox_begin(&dictionaryIterator);
+  dict_write_uint8(dictionaryIterator, CLEAR_PERSIST, 1);
+  app_message_outbox_send();
+}
+
 static void in_recv_handler(DictionaryIterator *iterator, void *context)
 {
   //Get Tuple
@@ -72,6 +81,10 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
         break;
       case GET_NTH_ENTRY:
         send_nth_entry(t->value->data);
+        break;
+      case CLEAR_PERSIST:
+        clear_persist();
+        ack_clear_persist();
         break;
     }
     // Get next pair, if any
