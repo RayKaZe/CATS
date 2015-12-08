@@ -5,8 +5,15 @@ Pebble.addEventListener("ready", function (e) {
 
 // Settings button in Pebble app
 Pebble.addEventListener("showConfiguration", function (e) {
+    DEBUG = 0;
     //Load the remote config page
-    Pebble.openURL("http://catsconfig.tk/index.html?cards="+JSON.stringify(cards));
+    if (DEBUG) {
+      base_url = "localhost:8000/"
+    } else {
+      base_url = "http://catsconfig.tk/"
+    }
+
+    Pebble.openURL(base_url+"index.html?cards="+JSON.stringify(cards));
 });
 
 // Configuration page closes
