@@ -7,6 +7,8 @@
 #include "menu_window.h"
 #include "app_comms.h"
 
+#define NDEBUG 1
+
 void init()
 {
   struct card_entry entry;
@@ -15,6 +17,7 @@ void init()
   splash_window_init();
   app_comms_init();
 
+#ifndef NDEBUG
   clear_persist();
   entry.data_type = BARCODE;
   entry.title = "Tesco1";
@@ -26,6 +29,7 @@ void init()
   add_entry( entry );
   entry = get_nth_entry(2);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "entry %s, %s", entry.title, entry.data);
+#endif
 }
 
 void deinit()
