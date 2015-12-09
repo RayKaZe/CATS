@@ -10,7 +10,7 @@ Pebble.addEventListener("showConfiguration", function (e) {
     if (DEBUG) {
       base_url = "localhost:8000/"
     } else {
-      base_url = "http://catsconfig.tk/"
+      base_url = "http://raykaze.github.io/Hacklondon-Pebble/"
     }
 
     Pebble.openURL(base_url+"index.html?cards="+JSON.stringify(cards));
