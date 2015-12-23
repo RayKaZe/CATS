@@ -1,3 +1,9 @@
+"use strict";
+
+var DEBUG = false;
+var cards = [];
+var n = 0;
+
 Pebble.addEventListener("ready", function (e) {
     console.log("PebbleKit JS ready! what what");
     sync_database();
@@ -5,13 +11,11 @@ Pebble.addEventListener("ready", function (e) {
 
 // Settings button in Pebble app
 Pebble.addEventListener("showConfiguration", function (e) {
-    DEBUG = 0;
-    //Load the remote config page
-    if (DEBUG) {
-      base_url = "localhost:8000/"
-    } else {
-      base_url = "http://raykaze.github.io/Hacklondon-Pebble/"
-    }
+    var base_url = "http://jamesgillard.com/hacklondon-pebble-config/";
+    if (DEBUG) base_url = "localhost:8000/";
+
+    console.log("In cards array when settings opened:");
+    console.log(JSON.stringify(cards));
 
     Pebble.openURL(base_url+"index.html?cards="+JSON.stringify(cards));
 });
@@ -22,7 +26,7 @@ Pebble.addEventListener("webviewclosed", function (e) {
     var configuration = JSON.parse(decodeURIComponent(e.response));
     console.log("Configuration window returned: " + JSON.stringify(configuration));
 
-    cards = configuration
+    cards = configuration;
 
     // clear data on watch
     Pebble.sendAppMessage(
@@ -63,20 +67,21 @@ Pebble.addEventListener("appmessage", function(e) {
   var dict = e.payload;
   console.log(JSON.stringify(dict));
 
-  if (dict.NUM_ENTRIES!=undefined) {
+  if (dict.NUM_ENTRIES !== undefined) {
     n = parseInt(dict.NUM_ENTRIES);
-    if (n>0) {
-      cards = []
+    if (n > 0) {
+      cards = [];
       get_nth_entry(1);
     }
-  } else if (dict.GET_NTH_ENTRY != undefined) {
-    cards.push(dict)
-    dict.GET_NTH_ENTRY
+  }
+  else if (dict.GET_NTH_ENTRY !== undefined) {
+    cards.push(dict);
     if (dict.GET_NTH_ENTRY < n) {
-      get_nth_entry(dict.GET_NTH_ENTRY+1);
+      get_nth_entry(dict.GET_NTH_ENTRY + 1);
     }
     console.log("change something on the html");
-  } else if (dict.CLEAR_PERSIST === 1) {
+  }
+  else if (dict.CLEAR_PERSIST === 1) {
     sendNextMessage();
   }
 });
