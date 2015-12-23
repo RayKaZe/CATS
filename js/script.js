@@ -1,14 +1,16 @@
-function checkInput() {
-    var cardNumberLen = $("#cardNumber").val().length
-    var cardNameLen   = $("#cardName"  ).val().length
+"use strict";
 
+function checkInput(cards) {
+  cards.forEach(function(card) {
+    var cardNumberLen = card["KEY_CARDNUMBER"].length;
+    var cardNameLen   = card["KEY_CARDNAME"].length;
     if      (cardNumberLen ===  0) { alert("Missing card number" ); return 1; }
     else if (cardNumberLen >=  20) { alert("Card number too long"); return 1; }
     else if (cardNameLen   ===  0) { alert("Missing card name"   ); return 1; }
     else if (cardNameLen   >=  10) { alert("Card name too long"  ); return 1; }
-
-    return 0;
-};
+  });
+  return 0;
+}
 
 function getCards() {
   var val    = "cards",
@@ -23,33 +25,23 @@ function getCards() {
   });
 
   result = decodeURIComponent(result);
-  result = JSON.parse(result)
+  result = JSON.parse(result);
   return result;
 }
 
-function updateTable () {
-  var table = document.getElementById("tableOfCards");
-  table.innerHTML = ""; // clear the table
+function populateList(cards) {
+  var list = document.getElementById("card-list");
 
   for (var i=0; i<cards.length; i++) {
-    var row = table.insertRow();
-    var cell0 = row.insertCell(0);
-    var cell1 = row.insertCell(1);
-    var cell2 = row.insertCell(2);
-    cell0.innerHTML = cards[i].KEY_CARDNAME;
-    cell1.innerHTML = cards[i].KEY_CARDNUMBER;
-    cell2.innerHTML = "<span class=\"glyphicon glyphicon-remove\"></span>";
+    var cardName = cards[i].KEY_CARDNAME;
+    var cardNumber = cards[i].KEY_CARDNUMBER;
+    var cardString = cardName + ":" + cardNumber;
+    var newLabel = "<div class=\"item\">" + cardString + "<div class=\"delete-item\"></div></div>";
+    list.innerHTML = newLabel + list.innerHTML;
+  }
 
-    cell2.onclick = function(event){
-      event.path.find( function (elem, ind, arr) {
-        if (elem.tagName === "TR") {
-          var i = elem.rowIndex;
-          console.log(i);
-          cards.splice(i, 1);
-          updateTable();
-        }
-      });
-    };
+  if (cards.length === 0) {
+    $("#debug-paragraph").html("No cards on watch");
   }
 }
 
@@ -71,33 +63,48 @@ function getQueryParam(variable, defaultValue) {
   return defaultValue || false;
 }
 
+function parseHtmlList() {
+
+  var list = document.getElementById("card-list");
+  var listItems = $("#card-list").children();
+
+  // Remove "add one more..." object
+  // var addOneMoreIndex = listItems.length - 1;
+  // delete listItems[addOneMoreIndex];
+
+  var cards = [];
+  for (var i = 0; i < listItems.length - 1; i++) {
+    var cardDetails = listItems[i].innerText.split(":");
+    var card = {
+      "KEY_CARDNAME": cardDetails[0],
+      "KEY_CARDNUMBER": cardDetails[1]
+    };
+    cards.push(card);
+  }
+
+  return cards;
+}
+
 document.addEventListener("DOMContentLoaded", function(event) {
-  $("#addcard_button").click( function () {
-    if (checkInput() === 0) {
-      var card = {
-                    "KEY_CARDNAME"   : $("#cardName").val(),
-                    "KEY_CARDNUMBER" : $("#cardNumber").val()
-                  };
-
-      cards.push(card);
-
-      // clear the input boxes
-      $("#cardName").val("");
-      $("#cardNumber").val("");
-
-      updateTable();
-    }
-  })
-
   $("#save_button").click( function() {
     // Set the return URL depending on the runtime environment
     var return_to = getQueryParam('return_to', 'pebblejs://close#');
-    console.log(return_to)
+    console.log(return_to);
+
+    var cards = parseHtmlList();
+    checkInput(cards);
+
     var location = return_to + encodeURIComponent(JSON.stringify(cards));
     console.log(location);
+    alert(location);
     document.location = location;
   });
 
-  cards = getCards();
-  updateTable();
+  // This gets round the dynamically added list elements not being bound to Slate.js
+  $(document).on("click", ".delete-item", function() {
+    $(this).parent().remove();
+  });
+
+  var cards = getCards();
+  populateList(cards);
 });

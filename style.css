@@ -1,11 +1,12 @@
-body {
+/*body {
     background-color: #333;
-    font-family: 'Press Start 2P', sans-serif; 
+    font-family: 'Press Start 2P', sans-serif;
     color: #eee;
 }
 h1 {
     text-align: center;
 }
+
 button, input {
     color: #333;
 }
@@ -27,4 +28,15 @@ button, input {
 
 table {
     font-size: 10px;
+}*/
+
+
+.title {
+    padding: 15px 10px;
+    text-transform: uppercase;
+    font-family: 'PT Sans', sans-serif;
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #888888;
+    text-align: center;
 }
