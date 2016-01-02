@@ -57,7 +57,8 @@ function getQueryParam(variable, defaultValue) {
 
     // If the query variable parameter is found, decode it to use and return it for use
     if (pair[0] === variable) {
-      return decodeURIComponent(pair[1]);
+      var url = decodeURIComponent(pair[1]);
+      return decodeURIComponent(url);
     }
   }
   return defaultValue || false;
