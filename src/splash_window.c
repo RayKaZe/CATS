@@ -34,7 +34,7 @@ void splash_window_load(Window *window)
   // Create time TextLayer
   splash_logo = text_layer_create(GRect(0, 10, 144, 50));
   text_layer_set_background_color(splash_logo, GColorClear);
-  text_layer_set_text_color(splash_logo, GColorClear);
+  text_layer_set_text_color(splash_logo, GColorWhite);
   text_layer_set_text(splash_logo, "CATS");
 
   // Improve the layout to be more like a watchface
