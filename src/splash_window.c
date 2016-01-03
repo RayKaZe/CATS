@@ -18,13 +18,14 @@ void config_provider(Window *window)
 
 void splash_window_unload(Window *window)
 {
-  window_destroy(window);
   text_layer_destroy(splash_logo);
+  gbitmap_destroy(splash_cat_bitmap);
 }
 
 void splash_timer_callback()
 {
   window_stack_pop(true);
+  window_destroy(splash_window);
 }
 
 void splash_window_load(Window *window)
