@@ -105,14 +105,13 @@ const char* charLookup[] = {
   "10111011110",
 };
 
-
 //static char* startA = "11010000100";
 //static char* startC = "11010010000";
 const char* startC = "11010011100";
 const char* fnc    = "11110101110";
 const char* stop   = "1100011101011";
 
-static char* drawBar(char *buf, char val) {
+static char* drawBar(char *buf, char val, GBitmap *bmp) {
   uint8_t row_size = gbitmap_get_bytes_per_row(bmp);
   for (int i = 0; i < row_size; i++) {
     buf[i] = val;
@@ -120,14 +119,14 @@ static char* drawBar(char *buf, char val) {
   return buf + row_size;
 }
 
-static char* drawChar(char *buf, const char *c) {
+static char* drawChar(char *buf, const char *c, GBitmap *bmp) {
   while (*c != '\0') {
     switch (*c) {
     case '0':
-      buf = drawBar(buf, 0xFF);
+      buf = drawBar(buf, 0xFF, bmp);
       break;
     case '1':
-      buf = drawBar(buf, 0x00);
+      buf = drawBar(buf, 0x00, bmp);
       break;
     }
     c++;
@@ -137,7 +136,7 @@ static char* drawChar(char *buf, const char *c) {
 
 static int charWidth = 11;
 
-int drawCode128(char *c) {
+int drawCode128(char *c, GBitmap *bmp) {
   int count = 2, sum = 207;
   char *buf = (char *) gbitmap_get_data(bmp);
   GRect bounds = gbitmap_get_bounds(bmp);
@@ -145,8 +144,8 @@ int drawCode128(char *c) {
   memset(buf, 0xFF, bounds.size.h * row_size);
 
   //Start sign
-  buf = drawChar(buf, startC);
-  buf = drawChar(buf, fnc);
+  buf = drawChar(buf, startC, bmp);
+  buf = drawChar(buf, fnc, bmp);
 
   while (*c != '\0') {
     int in1 = *c-48;
@@ -154,7 +153,7 @@ int drawCode128(char *c) {
     int in2 = *c-48;
     int number = in1 * 10 + in2;
 
-    buf = drawChar(buf, charLookup[number]);
+    buf = drawChar(buf, charLookup[number], bmp);
     APP_LOG(APP_LOG_LEVEL_INFO, "Number: %d", number);
 
     sum += count * (number);
@@ -166,8 +165,8 @@ int drawCode128(char *c) {
   sum %= 103;
 
   APP_LOG(APP_LOG_LEVEL_INFO, "Sum: %d", sum);
-  buf = drawChar(buf, charLookup[sum]);
-  buf = drawChar(buf, stop);
+  buf = drawChar(buf, charLookup[sum], bmp);
+  buf = drawChar(buf, stop, bmp);
 
   return (count+3)*charWidth +1;
 }
