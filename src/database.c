@@ -100,20 +100,20 @@ struct card_entry get_entry( int key )
 
   if ( !persist_exists(key) )
     return entry;
-  else
-    persist_read_data(key, byte_array, BUF_SIZE);
 
-    entry.data_type = byte_array[0];
-    title_len       = byte_array[1];
-    data_len        = byte_array[2];
+  persist_read_data(key, byte_array, BUF_SIZE);
 
-    entry.title = malloc(title_len+1);
-    entry.data  = malloc(data_len +1);
+  entry.data_type = byte_array[0];
+  title_len       = byte_array[1];
+  data_len        = byte_array[2];
 
-    memcpy( entry.title, &byte_array[3],           title_len );
-    memcpy( entry.data,  &byte_array[3+title_len], data_len  );
-    entry.title[title_len] = 0;
-    entry.data[data_len]   = 0;
+  entry.title = malloc(title_len+1);
+  entry.data  = malloc(data_len +1);
 
-    return entry;
+  memcpy( entry.title, &byte_array[3],           title_len );
+  memcpy( entry.data,  &byte_array[3+title_len], data_len  );
+  entry.title[title_len] = 0;
+  entry.data[data_len]   = 0;
+
+  return entry;
 }
