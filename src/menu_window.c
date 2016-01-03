@@ -5,6 +5,39 @@
 MenuLayer *menu_layer;
 Window* menu_window;
 
+static Window *help_text_window;
+static TextLayer *help_text_layer;
+
+static void help_text_window_load(Window *window) {
+  Layer *window_layer = window_get_root_layer(window);
+  GRect window_bounds = layer_get_bounds(window_layer);
+
+  // Create output TextLayer
+  help_text_layer = text_layer_create(GRect(5, 0, window_bounds.size.w - 5, window_bounds.size.h));
+  text_layer_set_text(help_text_layer, "Use \"Settings\" button for the CATS app on your pebble mobile phone app to add cards.");
+  text_layer_set_overflow_mode(help_text_layer, GTextOverflowModeWordWrap);
+  layer_add_child(window_layer, text_layer_get_layer(help_text_layer));
+}
+
+static void help_text_window_unload(Window *window) {
+  // Destroy output TextLayer
+  text_layer_destroy(help_text_layer);
+}
+
+static void help_text_window_init() {
+  // Create main Window
+  help_text_window = window_create();
+  window_set_window_handlers(help_text_window, (WindowHandlers) {
+    .load = help_text_window_load,
+    .unload = help_text_window_unload
+  });
+  window_stack_push(help_text_window, true);
+}
+
+static void help_text_window_deinit() {
+  window_destroy(help_text_window);
+}
+
 void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context)
 {
   struct card_entry entry;
@@ -13,12 +46,17 @@ void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, 
 
   entry = get_nth_entry(which);
 
-  menu_cell_basic_draw(ctx, cell_layer, entry.title, entry.data, NULL);
+  if (entry.data_type == UNDEFINED)
+    // draw help text
+    menu_cell_basic_draw(ctx, cell_layer, "Add card",  "Use \"Settings\" button", NULL);
+  else
+    menu_cell_basic_draw(ctx, cell_layer, entry.title, entry.data, NULL);
 }
 
 uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
 {
-  uint16_t list_len = num_entries();
+  uint16_t list_len = num_entries() + 1; // add 1 row for the help text
+
   APP_LOG(APP_LOG_LEVEL_DEBUG, "list length: %i", list_len);
   return list_len;
 }
@@ -27,20 +65,22 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
 {
   //Get which row
   int which = cell_index->row+1;
-  struct card_entry entry;
+  struct card_entry entry = get_nth_entry(which);
 
-  entry = get_nth_entry(which);
-
-  switch (entry.data_type) {
-    case BARCODE:
-      display_bar_code( &entry );
-      break;
-    case QRCODE:
-      //display_qr_code(entry_db[which].data);
-      break;
-    default:
-      APP_LOG(APP_LOG_LEVEL_WARNING, "Unrecognised Data Type");
-   }
+  if (entry.data_type != UNDEFINED) {
+    switch (entry.data_type) {
+      case BARCODE:
+        display_bar_code( &entry );
+        break;
+      case QRCODE:
+        //display_qr_code(entry_db[which].data);
+        break;
+      default:
+        APP_LOG(APP_LOG_LEVEL_WARNING, "Unrecognised Data Type");
+    }
+  } else {
+    help_text_window_init();
+  }
 }
 
 void menu_window_load(Window *window)
