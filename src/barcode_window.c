@@ -11,16 +11,16 @@ uint8_t *addr;
 void barcode_window_load(Window *window)
 {
   Layer *windowLayer = window_get_root_layer(window);
-	card_entry *data = (card_entry *) window_get_user_data(window);
+  card_entry *data = (card_entry *) window_get_user_data(window);
   GRect bounds = layer_get_bounds(windowLayer);
-	bounds.origin.y += MARGIN;
-	bounds.size.h -= 2 * MARGIN;
+  bounds.origin.y += MARGIN;
+  bounds.size.h -= 2 * MARGIN;
   bmp = gbitmap_create_blank(bounds.size, GBitmapFormat1Bit);
   barcode = bitmap_layer_create(bounds);
 
-	bitmap_layer_set_alignment(barcode, GAlignCenter);
+  bitmap_layer_set_alignment(barcode, GAlignCenter);
 
-	// Width in bytes, aligned to multiples of 4.
+  // Width in bytes, aligned to multiples of 4.
   uint16_t row_size_bytes = (bounds.size.w/8+3) & ~3;
   addr = malloc(bounds.size.h * row_size_bytes);
   gbitmap_set_data(bmp, addr, GBitmapFormat1Bit, row_size_bytes, true);
