@@ -65,13 +65,13 @@ static void in_recv_handler(DictionaryIterator *iterator, void *context)
     switch(t->key)
     {
       case KEY_CARDNAME:
-        app_log(APP_LOG_LEVEL_INFO,"main.c",48,"%s",t->value->cstring);
+        APP_LOG(APP_LOG_LEVEL_INFO, "%s", t->value->cstring);
         name_len = strlen( t->value->cstring );
         name = malloc(name_len+1);
         strcpy( name, t->value->cstring );
         break;
       case KEY_CARDNUMBER:
-        app_log(APP_LOG_LEVEL_INFO,"main.c",53,"%s",t->value->cstring);
+        APP_LOG(APP_LOG_LEVEL_INFO, "%s", t->value->cstring);
         number_len = strlen( t->value->cstring );
         number = malloc(number_len+1);
         strcpy( number, t->value->cstring );

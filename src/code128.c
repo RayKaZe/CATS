@@ -2,7 +2,7 @@
 
 #include "barcode.h"
 
-char* charLookup[] = {
+const char* charLookup[] = {
   "11011001100",
   "11001101100",
   "11001100110",
@@ -108,10 +108,9 @@ char* charLookup[] = {
 
 //static char* startA = "11010000100";
 //static char* startC = "11010010000";
-static char* startC = "11010011100";
-static char* fnc = "11110101110";
-
-static char* stop = "1100011101011";
+const char* startC = "11010011100";
+const char* fnc    = "11110101110";
+const char* stop   = "1100011101011";
 
 static char* drawBar(char *buf, char val) {
   uint8_t row_size = gbitmap_get_bytes_per_row(bmp);
@@ -121,7 +120,7 @@ static char* drawBar(char *buf, char val) {
   return buf + row_size;
 }
 
-static char* drawChar(char *buf, char *c) {
+static char* drawChar(char *buf, const char *c) {
   while (*c != '\0') {
     switch (*c) {
     case '0':
@@ -156,17 +155,17 @@ int drawCode128(char *c) {
     int number = in1 * 10 + in2;
 
     buf = drawChar(buf, charLookup[number]);
-    app_log(APP_LOG_LEVEL_INFO, "code128.c", 151, "Number: %d", number);
+    APP_LOG(APP_LOG_LEVEL_INFO, "Number: %d", number);
 
     sum += count * (number);
     count++;
     c++;
   }
-  app_log(APP_LOG_LEVEL_INFO, "code128.c", 157, "Sum0: %d", sum);
+  APP_LOG(APP_LOG_LEVEL_INFO, "Sum0: %d", sum);
 
   sum %= 103;
 
-  app_log(APP_LOG_LEVEL_INFO, "code128.c", 161, "Sum: %d", sum);
+  APP_LOG(APP_LOG_LEVEL_INFO, "Sum: %d", sum);
   buf = drawChar(buf, charLookup[sum]);
   buf = drawChar(buf, stop);
 
