@@ -5,7 +5,7 @@
 MenuLayer *menu_layer;
 Window* menu_window;
 
-static Window *help_text_window;
+static Window *help_text_window = NULL;
 static TextLayer *help_text_layer;
 
 static void help_text_window_load(Window *window) {
@@ -26,11 +26,14 @@ static void help_text_window_unload(Window *window) {
 
 static void help_text_window_init() {
   // Create main Window
-  help_text_window = window_create();
-  window_set_window_handlers(help_text_window, (WindowHandlers) {
-    .load = help_text_window_load,
-    .unload = help_text_window_unload
-  });
+  if (help_text_window == NULL) {
+    help_text_window = window_create();
+    window_set_window_handlers(help_text_window, (WindowHandlers) {
+      .load = help_text_window_load,
+      .unload = help_text_window_unload
+    });
+  }
+
   window_stack_push(help_text_window, true);
 }
 
@@ -127,4 +130,5 @@ void menu_window_init()
 void menu_window_deinit()
 {
   window_destroy(menu_window);
+  help_text_window_deinit();
 }
