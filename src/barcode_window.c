@@ -43,6 +43,7 @@ void barcode_window_load(Window *window)
   text_layer_set_font(footer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(footer, GTextAlignmentCenter);
   text_layer_set_text(footer, data->title);
+
   // Add it as a child layer to the Window's root layer
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(footer));
 }
@@ -54,15 +55,22 @@ void barcode_window_destory(void *window) {
 
 void barcode_window_unload(Window *window)
 {
-    bitmap_layer_destroy(barcode);
-    gbitmap_destroy(bmp);
-    text_layer_destroy(footer);
-    app_timer_register(100, barcode_window_destory, window);
+  card_entry *data = (card_entry *) window_get_user_data(window);
+  free(data->data);
+  free(data->title);
+  free(data);
+
+  bitmap_layer_destroy(barcode);
+  gbitmap_destroy(bmp);
+  text_layer_destroy(footer);
+  app_timer_register(100, barcode_window_destory, window);
 }
 
 void display_bar_code( struct card_entry * data )
 {
   Window* bar_code_window;
+  card_entry *entry = malloc(sizeof(card_entry));
+  memcpy(entry, data, sizeof(card_entry));
 
   APP_LOG(APP_LOG_LEVEL_INFO, "Displaying BARCODE\n");
   bar_code_window = window_create();
@@ -74,7 +82,7 @@ void display_bar_code( struct card_entry * data )
 #ifdef PBL_SDK_2
   window_set_fullscreen(bar_code_window, true);
 #endif
-  window_set_user_data(bar_code_window, data);
+  window_set_user_data(bar_code_window, entry);
   window_stack_push(bar_code_window, true);
 }
 
