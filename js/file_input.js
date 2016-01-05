@@ -61,7 +61,13 @@ $(function() {
             $node,
             canvas = Quagga.canvas.dom.image;
 
-        alert(result.codeResult.code);
+        var cardNumber = result.codeResult.code;
+        if (cardNumber) {
+            alert(cardNumber);
+            var cardName = prompt("What card is this?");
+            var card = [{"KEY_CARDNAME": cardName, "KEY_CARDNUMBER": cardNumber}];
+            populateList(card);
+        }
 
         // $node = $('<li><div class="thumbnail"><div class="imgWrapper"><img /></div><div class="caption"><h4 class="code"></h4></div></div></li>');
         // $node.find("img").attr("src", canvas.toDataURL());
