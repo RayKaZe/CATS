@@ -7,3 +7,13 @@
     color: #888888;
     text-align: center;
 }
+
+#interactive.viewport canvas, video {
+    float: left;
+    width: 100%;
+}
+
+#interactive.viewport canvas.drawingBuffer {
+    margin-left: -100%;
+    width: 100%;
+}

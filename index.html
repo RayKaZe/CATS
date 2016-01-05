@@ -2,10 +2,11 @@
 <html lang="en">
   <head>
     <title>CATS App Config</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel='stylesheet' type='text/css' href='lib/css/slate.min.css'>
     <link rel="stylesheet" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="js/quagga.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/quaggajs/0.8.2/quagga.js"></script>
     <script src="js/file_input.js"></script>
     <script src="js/script.js"></script>
     <script src='lib/js/slate.js'></script>
@@ -22,6 +23,22 @@
           <!-- <div class="item">Card 1:12345<div class="delete-item"></div></div> -->
         </div>
       </div>
+    </div>
+
+    <div class='item-container'>
+      <div class="item-container-content">
+        <div class="controls">
+          <fieldset class="input-group">
+            <input type="file" capture/>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+
+    <div id="interactive" class="viewport">
+      <canvas class="imgBuffer"></canvas>
+      <canvas class="drawingBuffer" width="100%" style="display: block;"></canvas>
+      <br clear="all">
     </div>
 
     <div class='item-container'>
