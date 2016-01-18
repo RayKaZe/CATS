@@ -23,6 +23,10 @@ $(function() {
                     ],
                     drawScanline: true
                 },
+                locator: {
+                    halfSample: true,
+                    patchSize: "large",
+                },
                 locate : true,
                 src : src
             }, function(result) {});
