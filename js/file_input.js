@@ -1,42 +1,48 @@
+"use strict";
+
 $(function() {
     var App = {
         init: function() {
             App.attachListeners();
         },
-        config: {
-            reader: "code_128"
-        },
         attachListeners: function() {
-            // $("#filesubmit").on("change", function(e) {
-            $(document).on('click', '#filesubmit', function(e) {
-                // alert('ysfdaa');
+            $(".controls input[type=file]").on("change", function(e) {
                 if (e.target.files && e.target.files.length) {
                     App.decode(URL.createObjectURL(e.target.files[0]));
                 }
             });
         },
         detachListeners: function() {
-            $("#filesubmit").off("change");        },
+            $(".controls input[type=file]").off("change");
+        },
         decode: function(src) {
             Quagga.decodeSingle({
                 decoder: {
-                    readers : [App.config.reader + '_reader']
+                    readers: [
+                        "code_128_reader"
+                    ],
+                    drawScanline: true
+                },
+                locator: {
+                    halfSample: true,
+                    patchSize: "large",
+                },
+                inputStream: {
+                    size: 800,
+                    singleChannel: false
                 },
                 locate : true,
                 src : src
             }, function(result) {});
         },
-        selectCodeListener: function(event) {
-            event.preventDefault();
-            $('#cardNumber').val(event.data);
-        }
     };
 
     App.init();
 
     Quagga.onProcessed(function(result) {
         var drawingCtx = Quagga.canvas.ctx.overlay,
-            drawingCanvas = Quagga.canvas.dom.overlay;
+            drawingCanvas = Quagga.canvas.dom.overlay,
+            area;
 
         if (result) {
             if (result.boxes) {
@@ -55,19 +61,25 @@ $(function() {
             if (result.codeResult && result.codeResult.code) {
                 Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
             }
-        }
+    }
     });
 
     Quagga.onDetected(function(result) {
         var code = result.codeResult.code,
-            clubnumber,
             $node,
             canvas = Quagga.canvas.dom.image;
 
-        $node = $('<div>Found this card:</div><h4 class="code"><a href="#"></a> <small></small></h4>');
-        $node.find("h4.code a").html(code.slice(3));
-        $node.find("h4.code small").html("("+code+")");
-        $node.find("h4.code a").click(code, App.selectCodeListener);
-        $("#baroutput").prepend($node);
+        var cardNumber = result.codeResult.code;
+        if (cardNumber) {
+            alert(cardNumber);
+            var cardName = prompt("What card is this?");
+            var card = [{"KEY_CARDNAME": cardName, "KEY_CARDNUMBER": cardNumber}];
+            populateList(card);
+        }
+
+        // $node = $('<li><div class="thumbnail"><div class="imgWrapper"><img /></div><div class="caption"><h4 class="code"></h4></div></div></li>');
+        // $node.find("img").attr("src", canvas.toDataURL());
+        // $node.find("h4.code").html(code);
+        // $("#result_strip ul.thumbnails").prepend($node);
     });
 });

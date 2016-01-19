@@ -1,58 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CATS App Config</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/quagga.js"></script>
-    <script src="js/file_input.js"></script>
+    <link rel='stylesheet' type='text/css' href='lib/css/slate.min.css'>
     <link rel="stylesheet" href="style.css">
-    <link href='//fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
-    <title>Pebble Config Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/quaggajs/0.8.2/quagga.js"></script>
+    <script src="js/file_input.js"></script>
+    <script src="js/script.js"></script>
+    <script src='lib/js/slate.js'></script>
   </head>
 
   <body>
-    <div class="container">
-      <h1>Pebble App Config</h1>
-      <hr>
 
-      <h4>Saved Cards</h4>
-      <table id="tableOfCards" class="table">
-        <tr>
-          <th>Card Name</th>
-          <th>Card Number</th>
-        </tr>
-      </table>
-      <hr>
+    <h1 class='title'>CATS App Config</h1>
 
-      <h4>Enter Card Manually
-        <a href="https://www.youtube.com/watch?v=1wIV6l2ux_8">.</a>
-      </h4>
-      Card Name: <input type="text" id="cardName" Placeholder="Tesco"><br><br>
-      Number: <input type="number" id="cardNumber" Placeholder="123456" pattern="\d*"><br><br>
-      <button id="addcard_button">Add card</button>
-      <hr>
-
-      <h4 style="float:left; margin-top: 3px"> Or Scan Card</h4>
-
-      <div style="float:left; margin-left: 10px" class="barcode">
-        <input type='file' id="filesubmit"></input>
-        <div id="baroutput"></div>
-      </div>
-
-      <div style="clear: both;"></div>
-      <div class="barcodeOutput">
-        <div id="interactive" class="viewport">
-          <canvas class="imgBuffer" width="100%" height="241"></canvas>
-          <canvas class="drawingBuffer" width="100%" height="241" style="display: block;"></canvas><br clear="all">
+    <div class="item-container">
+      <div class="item-container-header">Saved Cards</div>
+      <div class="item-container-content">
+        <div class="item-dynamic-list" id="card-list">
+          <!-- <div class="item">Card 1:12345<div class="delete-item"></div></div> -->
         </div>
       </div>
+    </div>
 
-      <hr>
-      <button id="save_button">SAVE</button>
-    </div><!-- /.container -->
+    <div class='item-container'>
+      <div class="item-container-content">
+        <div class="controls">
+          <fieldset class="input-group">
+            <input type="file" capture/>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+
+    <div id="interactive" class="viewport">
+      <canvas class="imgBuffer"></canvas>
+      <canvas class="drawingBuffer" width="100%" style="display: block;"></canvas>
+      <br clear="all">
+    </div>
+
+    <div class='item-container'>
+      <div class='button-container'>
+        <input id='save_button' type='button' class='item-button' value='SUBMIT'>
+      </div>
+    </div>
+
   </body>
 </html>
