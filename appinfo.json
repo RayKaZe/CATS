@@ -19,6 +19,11 @@
         "type": "png"
       },
       {
+        "file": "images/SPLASH_CAT_INVERT_FLIP.png",
+        "name": "SPLASH_CAT_INVERT_FLIP",
+        "type": "png"
+      },
+      {
         "file": "images/SPLASH_CAT_LOGO.png",
         "menuIcon": true,
         "name": "SPLASH_CAT_LOGO",
