@@ -11,7 +11,7 @@ Pebble.addEventListener("ready", function (e) {
 
 // Settings button in Pebble app
 Pebble.addEventListener("showConfiguration", function (e) {
-    var base_url = "https://http://raykaze.github.io/CATS/";
+    var base_url = "https://raykaze.github.io/CATS/";
     if (DEBUG) base_url = "localhost:8000/";
 
     console.log("In cards array when settings opened:");
