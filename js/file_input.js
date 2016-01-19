@@ -27,6 +27,10 @@ $(function() {
                     halfSample: true,
                     patchSize: "large",
                 },
+                inputStream: {
+                    size: 800,
+                    singleChannel: false
+                },
                 locate : true,
                 src : src
             }, function(result) {});
