@@ -21,6 +21,8 @@ void splash_window_unload(Window *window)
 {
   text_layer_destroy(splash_logo);
   gbitmap_destroy(splash_cat_bitmap);
+  gbitmap_destroy(splash_cat_bitmap_flip);
+  bitmap_layer_destroy(splash_cat_bitmap_layer);
 }
 
 void splash_timer_callback()
