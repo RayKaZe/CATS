@@ -97,7 +97,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     var location = return_to + encodeURIComponent(JSON.stringify(cards));
     console.log(location);
-    alert(location);
     document.location = location;
   });
 
