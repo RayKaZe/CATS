@@ -47,6 +47,8 @@ struct card_entry get_nth_entry(unsigned int n)
     if (count == n)
       return get_entry(i);
   }
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Returning %ith entry", n);
   return entry;
 }
 
@@ -114,6 +116,8 @@ struct card_entry get_entry( int key )
   memcpy( entry.data,  &byte_array[3+title_len], data_len  );
   entry.title[title_len] = 0;
   entry.data[data_len]   = 0;
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Entry %i: Title: %s, Data: %s", key, entry.title, entry.data);
 
   return entry;
 }

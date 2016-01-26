@@ -5,7 +5,7 @@ var cards = [];
 var n = 0;
 
 Pebble.addEventListener("ready", function (e) {
-    console.log("PebbleKit JS ready! what what");
+    console.log("PebbleKit JS ready!");
     sync_database();
 });
 
@@ -40,7 +40,9 @@ Pebble.addEventListener("webviewclosed", function (e) {
     );
 });
 
+// Runs on PebbleKit JS ready
 function sync_database () {
+  console.log("Sync Database");
   var message = {"NUM_ENTRIES": true};
   Pebble.sendAppMessage(
     message,
@@ -55,18 +57,20 @@ function sync_database () {
 
 function get_nth_entry(i) {
     var msg = {GET_NTH_ENTRY: i};
-    console.log("Getting", msg.GET_NTH_ENTRY, "th entry");
+    console.log("Getting entry " + msg.GET_NTH_ENTRY);
     Pebble.sendAppMessage(
       msg,
-      function (e) { console.log("Getting", msg.GET_NTH_ENTRY, "th entry"); },
-      function (e) { console.log("Getting", msg.GET_NTH_ENTRY, "entry failed"); }
+      function (e) { console.log("Got entry " + msg.GET_NTH_ENTRY); },
+      function (e) { console.log("Getting entry " + msg.GET_NTH_ENTRY + " failed"); }
     );
 }
 
+// The watch sent an AppMessage to PebbleKit JS
 Pebble.addEventListener("appmessage", function(e) {
   var dict = e.payload;
-  console.log(JSON.stringify(dict));
+  console.log("AppMessage Payload: " + JSON.stringify(dict));
 
+  // If any entries to get, start with the 1st
   if (dict.NUM_ENTRIES !== undefined) {
     n = parseInt(dict.NUM_ENTRIES);
     if (n > 0) {
@@ -74,8 +78,11 @@ Pebble.addEventListener("appmessage", function(e) {
       get_nth_entry(1);
     }
   }
+  // Push a specific entry to cards array
   else if (dict.GET_NTH_ENTRY !== undefined) {
+    console.log("Entry " + dict.GET_NTH_ENTRY + " contains " + dict);
     cards.push(dict);
+    // If more entries to get
     if (dict.GET_NTH_ENTRY < n) {
       get_nth_entry(dict.GET_NTH_ENTRY + 1);
     }
