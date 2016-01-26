@@ -48,7 +48,7 @@ struct card_entry get_nth_entry(unsigned int n)
       return get_entry(i);
   }
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Returning %ith entry", n);
+  // Not sure when this gets hit
   return entry;
 }
 
