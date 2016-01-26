@@ -22,6 +22,11 @@ Pebble.addEventListener("showConfiguration", function (e) {
 
 // Configuration page closes
 Pebble.addEventListener("webviewclosed", function (e) {
+    if (!e.response) {
+      console.log("Cancel button pressed");
+      return;
+    }
+
     //Get JSON dictionary
     var configuration = JSON.parse(decodeURIComponent(e.response));
     console.log("Configuration window returned: " + JSON.stringify(configuration));
