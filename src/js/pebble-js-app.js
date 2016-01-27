@@ -6,18 +6,11 @@ var n = 0;
 
 Pebble.addEventListener("ready", function (e) {
     console.log("PebbleKit JS ready!");
-    sync_database();
 });
 
 // Settings button in Pebble app
 Pebble.addEventListener("showConfiguration", function (e) {
-    var base_url = "https://raykaze.github.io/CATS/";
-    if (DEBUG) base_url = "localhost:8000/";
-
-    console.log("In cards array when settings opened:");
-    console.log(JSON.stringify(cards));
-
-    Pebble.openURL(base_url+"index.html?cards="+JSON.stringify(cards));
+    sync_database();
 });
 
 // Configuration page closes
@@ -70,6 +63,16 @@ function get_nth_entry(i) {
     );
 }
 
+function load_config_page() {
+  console.log("In cards array when settings opened:");
+  console.log(JSON.stringify(cards));
+
+  var base_url = "https://raykaze.github.io/CATS/";
+  if (DEBUG) base_url = "localhost:8000/";
+  console.log("change something on the html");
+  Pebble.openURL(base_url+"index.html?cards="+JSON.stringify(cards));
+}
+
 // The watch sent an AppMessage to PebbleKit JS
 Pebble.addEventListener("appmessage", function(e) {
   var dict = e.payload;
@@ -81,6 +84,8 @@ Pebble.addEventListener("appmessage", function(e) {
     if (n > 0) {
       cards = [];
       get_nth_entry(1);
+    } else {
+      load_config_page();
     }
   }
   // Push a specific entry to cards array
@@ -90,8 +95,9 @@ Pebble.addEventListener("appmessage", function(e) {
     // If more entries to get
     if (dict.GET_NTH_ENTRY < n) {
       get_nth_entry(dict.GET_NTH_ENTRY + 1);
+    } else {
+      load_config_page();
     }
-    console.log("change something on the html");
   }
   else if (dict.CLEAR_PERSIST === 1) {
     sendNextMessage();
