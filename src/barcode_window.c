@@ -24,7 +24,7 @@ void barcode_window_load(Window *window)
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(barcode));
 
   // Create time TextLayer
-  footer = text_layer_create(GRect(0, 140, 144, 30));
+  footer = text_layer_create(GRect(0, 130, 144, 38));
   text_layer_set_background_color(footer, GColorClear);
   text_layer_set_text_color(footer, GColorBlack);
 

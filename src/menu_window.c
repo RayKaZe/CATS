@@ -15,6 +15,7 @@ static void help_text_window_load(Window *window) {
   // Create output TextLayer
   help_text_layer = text_layer_create(GRect(5, 0, window_bounds.size.w - 5, window_bounds.size.h));
   text_layer_set_text(help_text_layer, "Use \"Settings\" button for the CATS app on your pebble mobile phone app to add cards.");
+  text_layer_set_font(help_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_overflow_mode(help_text_layer, GTextOverflowModeWordWrap);
   layer_add_child(window_layer, text_layer_get_layer(help_text_layer));
 }
